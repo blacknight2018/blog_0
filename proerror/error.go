@@ -4,6 +4,7 @@ package proerror
 const (
 	FieldEmpty = iota
 	ParamError = iota
+	FileEmpty  = iota
 )
 
 /* 错误类型 */

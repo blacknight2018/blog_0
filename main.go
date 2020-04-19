@@ -15,5 +15,10 @@ func main() {
 		article.DELETE("/:id", handler.Delete)
 		article.GET("/:id/detail", handler.QueryDetail)
 	}
+	resource := r.Group("/file", handler.Except, handler.RequestMiddle)
+	{
+		resource.POST("/", handler.SingleFileUpload)
+		resource.GET("/:id", handler.GetFile)
+	}
 	r.Run(":80")
 }
