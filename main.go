@@ -3,10 +3,14 @@ package main
 import (
 	"blog_0/handler"
 	"github.com/gin-gonic/gin"
+	_ "github.com/swaggo/gin-swagger/example/basic/docs"
 )
 
 func main() {
+
+	//
 	r := gin.Default()
+
 	article := r.Group("/article", handler.Except, handler.RequestMiddle)
 	{
 		article.GET("/", handler.Query)

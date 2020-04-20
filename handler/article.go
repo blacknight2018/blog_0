@@ -18,6 +18,12 @@ func checkParamsSafeStringNotEmpty(args ...string) bool {
 	return true
 }
 
+//@Accept json
+//@Produce json
+//@Summary Query
+//@Description Query Articles
+//@Router /article/
+//@Param limit offset order flag
 func Query(context *gin.Context) {
 	limit := context.DefaultQuery("limit", "10")
 	offset := context.DefaultQuery("offset", "0")
@@ -67,7 +73,9 @@ func Insert(context *gin.Context) {
 		title := gjson.Get(json, "title").String()
 		content := gjson.Get(json, "content").String()
 		description := gjson.Get(json, "description").String()
+		img := gjson.Get(json, "view_img").String()
 
+		//fmt.Println(img)
 		//检查空字段
 		if false == checkParamsSafeStringNotEmpty(author, title, content, description) {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.FieldEmpty})
@@ -77,7 +85,9 @@ func Insert(context *gin.Context) {
 			Title:       title,
 			Author:      author,
 			Content:     content,
-			Description: description}
+			Description: description,
+			ViewImg:     img,
+		}
 		article.InsertArticle()
 		context.Set(configure.ContextFiledName, ret)
 
