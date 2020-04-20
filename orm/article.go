@@ -7,14 +7,14 @@ import (
 )
 
 type Article struct {
-	Id          int       `gorm:"column:id;unique_index;PRIMARY_KEY"`
-	Title       string    `gorm:"column:title"`
-	Author      string    `gorm:"column:author"`
-	Content     string    `gorm:"column:content"`
-	Description string    `gorm:"column:description"`
-	Like        int       `gorm:"column:like;DEFAULT:0"`
-	CreateTime  time.Time `gorm:"column:create_time;"`
-	LastTime    time.Time `gorm:"column:last_time;-"`
+	Id          int       `json:"id" gorm:"column:id;unique_index;PRIMARY_KEY"`
+	Title       string    `json:"title,omitempty" gorm:"column:title"`
+	Author      string    `json:"author,omitempty" gorm:"column:author"`
+	Content     string    `json:"content,omitempty" gorm:"column:content"`
+	Description string    `json:"description,omitempty" gorm:"column:description"`
+	Like        int       `json:"like,omitempty" gorm:"column:like;DEFAULT:0"`
+	CreateTime  time.Time `json:"create_time,omitempty" gorm:"column:create_time;"`
+	LastTime    time.Time `json:"last_time,omitempty" gorm:"column:last_time;-"`
 }
 
 func (t Article) TableName() string {
@@ -67,6 +67,14 @@ func SelectPreviewField(db *gorm.DB) *gorm.DB {
 	}
 	return db.Select("id,title,author,description,create_time,last_time")
 }
+
+func SelectOnlyIdField(db *gorm.DB) *gorm.DB {
+	if db == nil {
+		db = GetDB()
+	}
+	return db.Select("id")
+}
+
 func GetResult(db *gorm.DB) []Article {
 	var articles []Article
 	if db != nil {

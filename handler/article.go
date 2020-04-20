@@ -22,12 +22,19 @@ func Query(context *gin.Context) {
 	limit := context.DefaultQuery("limit", "10")
 	offset := context.DefaultQuery("offset", "0")
 	order := context.DefaultQuery("order", "asc")
+	flag := context.DefaultQuery("flag", "")
 	limitInt, err := strconv.Atoi(limit)
 	offsetInt, err2 := strconv.Atoi(offset)
 	if err == nil && err2 == nil {
-		r := orm.GetArticleListLimits(nil, offsetInt, limitInt)
-		r = orm.OrderByIDDesc(r, order)
-		r = orm.SelectPreviewField(r)
+
+		r := orm.OrderByIDDesc(nil, order)
+		if flag == "len" {
+			r = orm.SelectOnlyIdField(nil)
+		} else {
+			r = orm.GetArticleListLimits(r, offsetInt, limitInt)
+			r = orm.SelectPreviewField(r)
+		}
+
 		ret := orm.GetResult(r)
 		if err == nil {
 			context.Set(configure.ContextFiledName, ret)
