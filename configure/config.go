@@ -1,7 +1,7 @@
 package configure
 
 const ContextFiledName = "data"
-const SessionName = "Chen"
+const SessionName = "Blog"
 
 const (
 	U_ROOT   = iota

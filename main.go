@@ -13,8 +13,8 @@ func main() {
 
 	//
 	r := gin.Default()
-
 	//Session profile
+
 	store := cookie.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions(configure.SessionName, store))
 
@@ -38,7 +38,7 @@ func main() {
 		//Set Session
 		user.POST("/login", handler.UserLogin)
 
-		user.GET("/head")
+		user.GET("", handler.UserQuery)
 	}
 	r.Run(":80")
 }

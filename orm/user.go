@@ -8,7 +8,7 @@ import (
 type User struct {
 	Uid        int        `json:"uid" gorm:"column:uid;unique_index;PRIMARY_KEY"`
 	User       string     `json:"user" gorm:"column:user;"`
-	PassWord   string     `gorm:"column:password;"`
+	PassWord   string     `json:"-" gorm:"column:password;"`
 	Type       int        `gorm:"column:type"`
 	AvatarUrl  string     `json:"avatar" gorm:"column:avatar"`
 	CreateTime *time.Time `gorm:"column:create_time" json:"create_time"`
@@ -27,9 +27,18 @@ func (t *User) InsertUser() {
 	}
 }
 
+/* 可以改的更详细一点:用户不存在 密码错误 */
 func (t *User) CheckUser() {
 	err := GetDB().Where("user = ? and password = ?", t.User, t.PassWord).Take(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.LoginFiled})
+	}
+}
+
+/* 根据主键ID 更新信息 */
+func (t *User) Get() {
+	err := GetDB().First(t).Error
+	if err != nil {
+		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }

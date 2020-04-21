@@ -58,8 +58,9 @@ func GetFile(context *gin.Context) {
 	r.GetFile()
 	MD5Id := r.FMd5
 	bytes := fileio.ReadFile(MD5Id)
-
 	context.Header("content-type", r.ContentType)
 	context.Header("content-disposition", r.ContentDisposition)
 	context.Writer.Write(bytes)
+	context.Writer.Flush()
+
 }
