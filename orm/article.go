@@ -15,7 +15,7 @@ type Article struct {
 	Like        int        `json:"like,omitempty" gorm:"column:like;DEFAULT:0"`
 	CreateTime  *time.Time `json:"create_time,omitempty" gorm:"column:create_time;"`
 	LastTime    *time.Time `json:"last_time,omitempty" gorm:"column:last_time;-"`
-	ViewImg     string     `json:"view_img" gorm:"column:view_img;"`
+	ViewImg     string     `json:"view_img,omitempty" gorm:"column:view_img;"`
 }
 
 func (t Article) TableName() string {
@@ -68,7 +68,7 @@ func SelectPreviewField(db *gorm.DB) *gorm.DB {
 	if db == nil {
 		db = GetDB()
 	}
-	return db.Select("id,title,author,description,create_time,last_time")
+	return db.Select("id,title,author,description,create_time,last_time,view_img")
 }
 
 func SelectOnlyIdField(db *gorm.DB) *gorm.DB {

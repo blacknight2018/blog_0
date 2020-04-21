@@ -1,6 +1,13 @@
 package configure
 
 const ContextFiledName = "data"
+const SessionName = "Chen"
+
+const (
+	U_ROOT   = iota
+	U_ADMIN_ = iota
+	U_USER   = iota
+)
 
 //数据库链接
 func GetDSN() string {

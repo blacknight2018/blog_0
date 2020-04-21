@@ -5,6 +5,7 @@ const (
 	FieldEmpty = iota
 	ParamError = iota
 	FileEmpty  = iota
+	LoginFiled = iota
 )
 
 /* 错误类型 */

@@ -27,7 +27,7 @@ func checkParamsSafeStringNotEmpty(args ...string) bool {
 func Query(context *gin.Context) {
 	limit := context.DefaultQuery("limit", "10")
 	offset := context.DefaultQuery("offset", "0")
-	order := context.DefaultQuery("order", "asc")
+	order := context.DefaultQuery("order", "desc")
 	flag := context.DefaultQuery("flag", "")
 	limitInt, err := strconv.Atoi(limit)
 	offsetInt, err2 := strconv.Atoi(offset)
