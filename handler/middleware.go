@@ -32,6 +32,7 @@ func RequestMiddle(context *gin.Context) {
 		var obj = make(map[string]interface{})
 		//对响应的JSON添加更多的字段
 		obj[configure.ContextFiledName] = resp
+		obj[configure.ResponseStatusFiledName] = "ok"
 		//
 		output, err := json.Marshal(&obj)
 		if err == nil {

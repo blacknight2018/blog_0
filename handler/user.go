@@ -40,7 +40,6 @@ func getSessionUser(context *gin.Context) *orm.User {
 	return (session.Get("user")).(*orm.User)
 }
 func UserLogin(context *gin.Context) {
-	var ret string
 	bs, err := context.GetRawData()
 	if err == nil {
 		json := string(bs)
@@ -52,7 +51,7 @@ func UserLogin(context *gin.Context) {
 		}
 		us.CheckUser()
 		setSessionUser(context, us)
-		context.Set(configure.ContextFiledName, ret)
+		context.Set(configure.ContextFiledName, us)
 
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})

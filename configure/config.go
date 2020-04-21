@@ -1,6 +1,7 @@
 package configure
 
 const ContextFiledName = "data"
+const ResponseStatusFiledName = "status"
 const SessionName = "Blog"
 
 const (
