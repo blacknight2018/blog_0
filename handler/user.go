@@ -5,7 +5,6 @@ import (
 	"blog_0/orm"
 	"blog_0/proerror"
 	"encoding/gob"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 )
@@ -31,13 +30,11 @@ func UserInsert(context *gin.Context) {
 	}
 }
 func setSessionUser(context *gin.Context, us orm.User) {
-	session := sessions.Default(context)
-	session.Set("user", us)
-	session.Save()
+
 }
 func getSessionUser(context *gin.Context) *orm.User {
-	session := sessions.Default(context)
-	return (session.Get("user")).(*orm.User)
+
+	return nil
 }
 func UserLogin(context *gin.Context) {
 	bs, err := context.GetRawData()

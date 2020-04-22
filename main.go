@@ -1,10 +1,7 @@
 package main
 
 import (
-	"blog_0/configure"
 	"blog_0/handler"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	_ "github.com/swaggo/gin-swagger/example/basic/docs"
 )
@@ -15,10 +12,10 @@ func main() {
 	r := gin.Default()
 	//Session profile
 
-	store := cookie.NewStore([]byte("secret"))
-	r.Use(sessions.Sessions(configure.SessionName, store))
+	//store := cookie.NewStore([]byte("secret"))
+	//r.Use(sessions.Sessions(configure.SessionName, store))
 
-	article := r.Group("/articles", handler.Except, handler.RequestMiddle)
+	article := r.Group("/articles", handler.RequestMiddle, handler.Except)
 	{
 		article.GET("", handler.Query)
 		article.POST("", handler.Insert)
@@ -26,12 +23,12 @@ func main() {
 		article.DELETE("/:id", handler.Delete)
 		article.GET("/:id/detail", handler.QueryDetail)
 	}
-	resource := r.Group("/file", handler.Except, handler.RequestMiddle)
+	resource := r.Group("/file", handler.RequestMiddle, handler.Except)
 	{
 		resource.POST("/", handler.SingleFileUpload)
 		resource.GET("/:id", handler.GetFile)
 	}
-	user := r.Group("/user", handler.Except, handler.RequestMiddle)
+	user := r.Group("/user", handler.RequestMiddle, handler.Except)
 	{
 		user.POST("/add", handler.UserInsert)
 

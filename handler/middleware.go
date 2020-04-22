@@ -26,20 +26,35 @@ func RequestMiddle(context *gin.Context) {
 
 	context.Next()
 
+	defer func() {
+		if err := recover(); err != nil {
+			logger.SimpleLog()
+		}
+	}()
+
+	var obj = make(map[string]interface{})
+
 	//运行到这里表面没有异常和错误
 	resp, err := context.Get(configure.ContextFiledName)
+
 	if err {
-		var obj = make(map[string]interface{})
 		//对响应的JSON添加更多的字段
 		obj[configure.ContextFiledName] = resp
 		obj[configure.ResponseStatusFiledName] = "ok"
-		//
-		output, err := json.Marshal(&obj)
-		if err == nil {
-			context.Writer.WriteString(string(output))
+	} else {
+		resp2, err2 := context.Get(configure.ContextErrorFiledName)
+		if err2 {
+			obj[configure.ResponseStatusFiledName] = "error"
+			obj[configure.ContextErrorFiledName] = resp2
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 		}
+	}
+
+	//
+	output, err3 := json.Marshal(&obj)
+	if err3 == nil {
+		context.Writer.WriteString(string(output))
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
@@ -57,11 +72,12 @@ func Except(context *gin.Context) {
 					logger.SimpleLog()
 				case proerror.ErrorOpera:
 					//业务错误
-					json, _ := json.Marshal(&err)
-					context.Writer.WriteString(string(json))
+					//json, _ := json.Marshal(&err)
+					//context.Writer.WriteString(string(json))
 				}
 				//阻止传播
-				context.Abort()
+				//context.Abort()
+				context.Set(configure.ContextErrorFiledName, err)
 			} else {
 				//记录日志
 				logger.SimpleLog()
