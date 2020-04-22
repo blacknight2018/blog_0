@@ -9,7 +9,7 @@ type User struct {
 	Uid        int        `json:"uid" gorm:"column:uid;unique_index;PRIMARY_KEY"`
 	User       string     `json:"user" gorm:"column:user;"`
 	PassWord   string     `json:"-" gorm:"column:password;"`
-	Type       int        `gorm:"column:type"`
+	Type       int        `json:"type" gorm:"column:type"`
 	AvatarUrl  string     `json:"avatar" gorm:"column:avatar"`
 	CreateTime *time.Time `gorm:"column:create_time" json:"create_time"`
 }

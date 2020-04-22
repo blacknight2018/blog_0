@@ -33,6 +33,7 @@ func main() {
 		user.POST("/add", handler.UserInsert)
 
 		//Set Session
+		user.OPTIONS("/login")
 		user.POST("/login", handler.UserLogin)
 
 		user.GET("", handler.UserQuery)
