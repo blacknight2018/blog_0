@@ -4,7 +4,6 @@ const ContextFiledName = "data"
 const ContextErrorFiledName = "error"
 const ResponseStatusFiledName = "status"
 const SessionName = "Blog"
-
 const (
 	U_ROOT   = iota
 	U_ADMIN_ = iota

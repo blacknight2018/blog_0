@@ -6,6 +6,7 @@ const (
 	ParamError = iota
 	FileEmpty  = iota
 	LoginFiled = iota
+	Cookie     = iota
 )
 
 /* 错误类型 */

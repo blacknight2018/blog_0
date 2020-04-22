@@ -2,6 +2,7 @@ package handler
 
 import (
 	"blog_0/configure"
+	"blog_0/conversation"
 	"blog_0/orm"
 	"blog_0/proerror"
 	"encoding/gob"
@@ -29,13 +30,6 @@ func UserInsert(context *gin.Context) {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
-func setSessionUser(context *gin.Context, us orm.User) {
-
-}
-func getSessionUser(context *gin.Context) *orm.User {
-
-	return nil
-}
 func UserLogin(context *gin.Context) {
 	bs, err := context.GetRawData()
 	if err == nil {
@@ -47,7 +41,7 @@ func UserLogin(context *gin.Context) {
 			PassWord: password,
 		}
 		us.CheckUser()
-		setSessionUser(context, us)
+		conversation.SetSessionUser(context, us)
 		context.Set(configure.ContextFiledName, us)
 
 	} else {
@@ -55,7 +49,7 @@ func UserLogin(context *gin.Context) {
 	}
 }
 func UserQuery(context *gin.Context) {
-	us := getSessionUser(context)
+	us := conversation.GetSessionUser(context)
 	if us != nil {
 		//fmt.Println(us)
 		us.Get()
