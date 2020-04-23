@@ -8,6 +8,7 @@ import (
 	"encoding/gob"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
+	"strconv"
 )
 
 func init() {
@@ -49,9 +50,14 @@ func UserLogin(context *gin.Context) {
 	}
 }
 func UserQuery(context *gin.Context) {
+	//默认查询自己，
 	us := conversation.GetSessionUser(context)
+	uid := context.Query("uid")
+	uidInt, err := strconv.Atoi(uid)
+	if uid != "" && err == nil {
+		us.Uid = uidInt
+	}
 	if us != nil {
-		//fmt.Println(us)
 		us.Get()
 		context.Set(configure.ContextFiledName, us)
 	} else {

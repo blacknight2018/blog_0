@@ -15,6 +15,7 @@ func main() {
 	//store := cookie.NewStore([]byte("secret"))
 	//r.Use(sessions.Sessions(configure.SessionName, store))
 
+	//需要先登录
 	article := r.Group("/articles", handler.RequestMiddle, handler.Except)
 	{
 		article.GET("", handler.Query)
@@ -23,6 +24,8 @@ func main() {
 		article.DELETE("/:id", handler.Delete)
 		article.GET("/:id/detail", handler.QueryDetail)
 	}
+
+	//需要先登录
 	resource := r.Group("/file", handler.RequestMiddle, handler.Except)
 	{
 		resource.POST("/", handler.SingleFileUpload)
@@ -30,12 +33,14 @@ func main() {
 	}
 	user := r.Group("/user", handler.RequestMiddle, handler.Except)
 	{
+		//需要先登录
 		user.POST("/add", handler.UserInsert)
 
 		//Set Session
 		user.OPTIONS("/login")
 		user.POST("/login", handler.UserLogin)
 
+		//需要先登录
 		user.GET("", handler.UserQuery)
 	}
 	r.Run(":80")
