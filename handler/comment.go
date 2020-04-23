@@ -45,7 +45,7 @@ func InsertComment(context *gin.Context) {
 
 func QueryComment(context *gin.Context) {
 	articleId := context.Param("article_id")
-	limit := context.DefaultQuery("limit", "10")
+	limit := context.DefaultQuery("limit", "50")
 	offset := context.DefaultQuery("offset", "0")
 	order := context.DefaultQuery("order", "asc")
 	flag := context.DefaultQuery("flag", "")

@@ -18,6 +18,8 @@ func main() {
 	//需要先登录
 	article := r.Group("/article", handler.RequestMiddle, handler.Except)
 	{
+		article.OPTIONS("")
+
 		article.GET("", handler.QueryArticle)
 		article.POST("", handler.InsertArticle)
 		article.PUT("/:id", handler.ChangeArticle)
@@ -50,5 +52,5 @@ func main() {
 
 		comment.GET(("/:article_id"), handler.QueryComment)
 	}
-	r.Run(":80")
+	r.Run(":81")
 }

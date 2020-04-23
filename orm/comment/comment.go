@@ -83,7 +83,7 @@ func SelectPreviewField(db *gorm.DB) *gorm.DB {
 	if db == nil {
 		db = orm.GetDB()
 	}
-	return db.Select("cid,ancestor_cid,content,last_time,uid")
+	return db.Select("cid,ancestor_cid,content,last_time,uid,replyto_cid")
 }
 
 func SetDestArticleId(db *gorm.DB, articleId int) *gorm.DB {

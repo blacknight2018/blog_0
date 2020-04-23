@@ -2,6 +2,7 @@ package handler
 
 import (
 	"blog_0/configure"
+	"blog_0/conversation"
 	"blog_0/orm/article"
 	"blog_0/proerror"
 	"github.com/gin-gonic/gin"
@@ -65,21 +66,21 @@ func InsertArticle(context *gin.Context) {
 	bs, err := context.GetRawData()
 	if err == nil {
 		json := string(bs)
-		author := gjson.Get(json, "author").String()
 		title := gjson.Get(json, "title").String()
 		content := gjson.Get(json, "content").String()
 		description := gjson.Get(json, "description").String()
 		img := gjson.Get(json, "view_img").String()
+		us := conversation.GetSessionUser(context)
 
 		//fmt.Println(img)
 		//检查空字段
-		if false == checkParamsSafeStringNotEmpty(author, title, content, description) {
+		if false == checkParamsSafeStringNotEmpty(title, content, description) {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.FieldEmpty})
 		}
 
 		article := article.Article{
 			Title:       title,
-			Author:      author,
+			Author:      strconv.Itoa(us.Uid),
 			Content:     content,
 			Description: description,
 			ViewImg:     img,
