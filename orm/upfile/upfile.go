@@ -1,6 +1,7 @@
-package orm
+package upfile
 
 import (
+	"blog_0/orm"
 	"blog_0/proerror"
 	"time"
 )
@@ -18,14 +19,14 @@ func (t UpFile) TableName() string {
 }
 
 func (t *UpFile) InsertFile() {
-	err := GetDB().Create(t).Error
+	err := orm.GetDB().Create(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
 
 func (t *UpFile) GetFile() {
-	err := GetDB().First(t).Error
+	err := orm.GetDB().First(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}

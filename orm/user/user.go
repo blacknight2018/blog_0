@@ -1,6 +1,7 @@
-package orm
+package user
 
 import (
+	"blog_0/orm"
 	"blog_0/proerror"
 	"time"
 )
@@ -21,7 +22,7 @@ func (t User) TableName() string {
 func (t *User) InsertUser() {
 	now := time.Now()
 	t.CreateTime = &now
-	err := GetDB().Create(t).Error
+	err := orm.GetDB().Create(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
@@ -29,15 +30,15 @@ func (t *User) InsertUser() {
 
 /* 可以改的更详细一点:用户不存在 密码错误 */
 func (t *User) CheckUser() {
-	err := GetDB().Where("user = ? and password = ?", t.User, t.PassWord).Take(t).Error
+	err := orm.GetDB().Where("user = ? and password = ?", t.User, t.PassWord).Take(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.LoginFiled})
 	}
 }
 
 /* 根据主键ID 更新信息 */
-func (t *User) Get() {
-	err := GetDB().First(t).Error
+func (t *User) GetUser() {
+	err := orm.GetDB().First(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}

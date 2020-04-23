@@ -1,6 +1,7 @@
-package orm
+package comment
 
 import (
+	"blog_0/orm"
 	"blog_0/proerror"
 	"time"
 )
@@ -41,14 +42,14 @@ func (t *Comment) InsertComment() {
 		}
 	}
 	t.AncestorCid = ancestorCid
-	err := GetDB().Create(t).Error
+	err := orm.GetDB().Create(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
 
 func (t *Comment) GetDetail() {
-	err := GetDB().First(t).Error
+	err := orm.GetDB().First(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}

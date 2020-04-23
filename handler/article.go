@@ -2,7 +2,7 @@ package handler
 
 import (
 	"blog_0/configure"
-	"blog_0/orm"
+	"blog_0/orm/article"
 	"blog_0/proerror"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
@@ -24,7 +24,7 @@ func checkParamsSafeStringNotEmpty(args ...string) bool {
 //@Description Query Articles
 //@Router /article/
 //@Param limit offset order flag
-func Query(context *gin.Context) {
+func QueryArticle(context *gin.Context) {
 	limit := context.DefaultQuery("limit", "10")
 	offset := context.DefaultQuery("offset", "0")
 	order := context.DefaultQuery("order", "desc")
@@ -33,15 +33,15 @@ func Query(context *gin.Context) {
 	offsetInt, err2 := strconv.Atoi(offset)
 	if err == nil && err2 == nil {
 
-		r := orm.OrderByIDDesc(nil, order)
+		r := article.OrderByIDDesc(nil, order)
 		if flag == "len" {
-			r = orm.SelectOnlyIdField(nil)
+			r = article.SelectOnlyIdField(nil)
 		} else {
-			r = orm.GetArticleListLimits(r, offsetInt, limitInt)
-			r = orm.SelectPreviewField(r)
+			r = article.GetArticleListLimits(r, offsetInt, limitInt)
+			r = article.SelectPreviewField(r)
 		}
 
-		ret := orm.GetResult(r)
+		ret := article.GetResult(r)
 		if err == nil {
 			context.Set(configure.ContextFiledName, ret)
 		} else {
@@ -51,11 +51,11 @@ func Query(context *gin.Context) {
 	}
 	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 }
-func QueryDetail(context *gin.Context) {
+func QueryArticleDetail(context *gin.Context) {
 	var id string = context.Param("id")
 	var idInt, err = strconv.Atoi(id)
 	if err == nil {
-		var article = orm.Article{
+		var article = article.Article{
 			Id: idInt,
 		}
 		article.GetDetail()
@@ -64,7 +64,7 @@ func QueryDetail(context *gin.Context) {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
-func Insert(context *gin.Context) {
+func InsertArticle(context *gin.Context) {
 	var ret string
 	bs, err := context.GetRawData()
 	if err == nil {
@@ -81,7 +81,7 @@ func Insert(context *gin.Context) {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.FieldEmpty})
 		}
 
-		article := orm.Article{
+		article := article.Article{
 			Title:       title,
 			Author:      author,
 			Content:     content,
@@ -96,12 +96,12 @@ func Insert(context *gin.Context) {
 	}
 }
 
-func Delete(context *gin.Context) {
+func DeleteArticle(context *gin.Context) {
 	var ret string
 	var id string = context.Param("id")
 	var idInt, err = strconv.Atoi(id)
 	if err == nil {
-		var article = orm.Article{
+		var article = article.Article{
 			Id: idInt,
 		}
 		article.DeleteArticle()
@@ -111,7 +111,7 @@ func Delete(context *gin.Context) {
 	}
 }
 
-func Change(context *gin.Context) {
+func ChangeArticle(context *gin.Context) {
 	var id string = context.Param("id")
 	var idInt, err = strconv.Atoi(id)
 	bs, err2 := context.GetRawData()
@@ -120,12 +120,12 @@ func Change(context *gin.Context) {
 
 		content := gjson.Get(json, "content").String()
 
-		var article = orm.Article{
+		var article = article.Article{
 			Id: idInt,
 		}
 		article.GetDetail()
 		article.Content = content
-		article.Save()
+		article.SaveArticle()
 
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})

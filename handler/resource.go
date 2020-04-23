@@ -3,7 +3,7 @@ package handler
 import (
 	"blog_0/configure"
 	"blog_0/fileio"
-	"blog_0/orm"
+	"blog_0/orm/upfile"
 	"blog_0/proerror"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -33,7 +33,7 @@ func SingleFileUpload(context *gin.Context) {
 	}()
 	ContentDisposition := form.Header.Get("content-disposition")
 	ContentType := form.Header.Get("content-type")
-	r := orm.UpFile{
+	r := upfile.UpFile{
 		ContentDisposition: ContentDisposition,
 		ContentType:        ContentType,
 		FMd5:               md5ID,
@@ -52,7 +52,7 @@ func GetFile(context *gin.Context) {
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
-	r := orm.UpFile{
+	r := upfile.UpFile{
 		Fid: fidInt,
 	}
 	r.GetFile()

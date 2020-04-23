@@ -18,11 +18,11 @@ func main() {
 	//需要先登录
 	article := r.Group("/articles", handler.RequestMiddle, handler.Except)
 	{
-		article.GET("", handler.Query)
-		article.POST("", handler.Insert)
-		article.PUT("/:id", handler.Change)
-		article.DELETE("/:id", handler.Delete)
-		article.GET("/:id/detail", handler.QueryDetail)
+		article.GET("", handler.QueryArticle)
+		article.POST("", handler.InsertArticle)
+		article.PUT("/:id", handler.ChangeArticle)
+		article.DELETE("/:id", handler.DeleteArticle)
+		article.GET("/:id/detail", handler.QueryArticleDetail)
 	}
 
 	//需要先登录
@@ -46,6 +46,8 @@ func main() {
 	comment := r.Group("/comment", handler.RequestMiddle, handler.Except)
 	{
 		comment.POST("", handler.InsertComment)
+
+		comment.GET(("/:article_id"), handler.QueryComment)
 	}
 	r.Run(":80")
 }

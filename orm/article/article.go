@@ -1,6 +1,7 @@
-package orm
+package article
 
 import (
+	"blog_0/orm"
 	"blog_0/proerror"
 	"github.com/jinzhu/gorm"
 	"time"
@@ -26,54 +27,54 @@ func (t *Article) InsertArticle() {
 	now := time.Now()
 	t.CreateTime = &now
 	t.LastTime = &now
-	err := GetDB().Create(t).Error
+	err := orm.GetDB().Create(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
 func (t *Article) DeleteArticle() {
-	err := GetDB().Delete(t).Error
+	err := orm.GetDB().Delete(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
 
 func (t *Article) GetDetail() {
-	err := GetDB().First(t).Error
+	err := orm.GetDB().First(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
 
-func (t *Article) Save() {
-	err := GetDB().Save(&t).Error
+func (t *Article) SaveArticle() {
+	err := orm.GetDB().Save(&t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
 func GetArticleListLimits(db *gorm.DB, offset int, limit int) *gorm.DB {
 	if db == nil {
-		db = GetDB()
+		db = orm.GetDB()
 	}
 	return db.Limit(limit).Offset(offset)
 }
 
 func OrderByIDDesc(db *gorm.DB, order string) *gorm.DB {
 	if db == nil {
-		db = GetDB()
+		db = orm.GetDB()
 	}
 	return db.Order("id " + order)
 }
 func SelectPreviewField(db *gorm.DB) *gorm.DB {
 	if db == nil {
-		db = GetDB()
+		db = orm.GetDB()
 	}
 	return db.Select("id,title,author,description,create_time,last_time,view_img")
 }
 
 func SelectOnlyIdField(db *gorm.DB) *gorm.DB {
 	if db == nil {
-		db = GetDB()
+		db = orm.GetDB()
 	}
 	return db.Select("id")
 }

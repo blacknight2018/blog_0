@@ -3,7 +3,7 @@ package handler
 import (
 	"blog_0/configure"
 	"blog_0/conversation"
-	"blog_0/orm"
+	users "blog_0/orm/user"
 	"blog_0/proerror"
 	"encoding/gob"
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	gob.Register(&orm.User{})
+	gob.Register(&users.User{})
 }
 func UserInsert(context *gin.Context) {
 	bs, err := context.GetRawData()
@@ -21,7 +21,8 @@ func UserInsert(context *gin.Context) {
 		user := gjson.Get(json, "user").String()
 		password := gjson.Get(json, "password").String()
 		avatar := gjson.Get(json, "avatar").String()
-		us := orm.User{
+
+		us := users.User{
 			User:      user,
 			PassWord:  password,
 			AvatarUrl: avatar,
@@ -37,7 +38,7 @@ func UserLogin(context *gin.Context) {
 		json := string(bs)
 		user := gjson.Get(json, "user").String()
 		password := gjson.Get(json, "password").String()
-		us := orm.User{
+		us := users.User{
 			User:     user,
 			PassWord: password,
 		}
@@ -58,7 +59,7 @@ func UserQuery(context *gin.Context) {
 		us.Uid = uidInt
 	}
 	if us != nil {
-		us.Get()
+		us.GetUser()
 		context.Set(configure.ContextFiledName, us)
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
