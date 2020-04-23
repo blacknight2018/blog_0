@@ -59,7 +59,7 @@ func QueryComment(context *gin.Context) {
 			r = comment.SelectOnlyIdField(r)
 		} else {
 			//根据参数过滤
-			r = comment.SetCommentListLimits(r, offsetInt, limitInt)
+			r = comment.SetCommentListLimit(r, offsetInt, limitInt)
 
 			//只返回目标Article
 			r = comment.SetDestArticleId(r, articleIdInt)

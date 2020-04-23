@@ -16,7 +16,7 @@ func main() {
 	//r.Use(sessions.Sessions(configure.SessionName, store))
 
 	//需要先登录
-	article := r.Group("/articles", handler.RequestMiddle, handler.Except)
+	article := r.Group("/article", handler.RequestMiddle, handler.Except)
 	{
 		article.GET("", handler.QueryArticle)
 		article.POST("", handler.InsertArticle)

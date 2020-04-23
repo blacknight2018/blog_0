@@ -70,7 +70,7 @@ func SelectOnlyIdField(db *gorm.DB) *gorm.DB {
 	return db.Select("cid")
 }
 
-func SetCommentListLimits(db *gorm.DB, offset int, limit int) *gorm.DB {
+func SetCommentListLimit(db *gorm.DB, offset int, limit int) *gorm.DB {
 	if db == nil {
 		db = orm.GetDB()
 	}

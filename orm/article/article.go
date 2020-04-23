@@ -52,7 +52,7 @@ func (t *Article) SaveArticle() {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
-func SetArticleListLimits(db *gorm.DB, offset int, limit int) *gorm.DB {
+func SetArticleListLimit(db *gorm.DB, offset int, limit int) *gorm.DB {
 	if db == nil {
 		db = orm.GetDB()
 	}

@@ -37,7 +37,7 @@ func QueryArticle(context *gin.Context) {
 		if flag == "len" {
 			r = article.SelectOnlyIdField(r)
 		} else {
-			r = article.SetArticleListLimits(r, offsetInt, limitInt)
+			r = article.SetArticleListLimit(r, offsetInt, limitInt)
 			r = article.SelectPreviewField(r)
 		}
 
