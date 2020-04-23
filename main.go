@@ -45,6 +45,7 @@ func main() {
 	}
 	comment := r.Group("/comment", handler.RequestMiddle, handler.Except)
 	{
+		comment.OPTIONS("")
 		comment.POST("", handler.InsertComment)
 
 		comment.GET(("/:article_id"), handler.QueryComment)
