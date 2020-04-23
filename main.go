@@ -43,5 +43,9 @@ func main() {
 		//需要先登录
 		user.GET("", handler.UserQuery)
 	}
+	comment := r.Group("/comment", handler.RequestMiddle, handler.Except)
+	{
+		comment.POST("", handler.InsertComment)
+	}
 	r.Run(":80")
 }
