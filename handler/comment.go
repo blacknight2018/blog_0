@@ -4,7 +4,9 @@ import (
 	"blog_0/configure"
 	"blog_0/conversation"
 	"blog_0/orm/comment"
+	"blog_0/orm/user"
 	"blog_0/proerror"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"strconv"
@@ -45,7 +47,7 @@ func QueryComment(context *gin.Context) {
 	articleId := context.Param("article_id")
 	limit := context.DefaultQuery("limit", "10")
 	offset := context.DefaultQuery("offset", "0")
-	order := context.DefaultQuery("order", "desc")
+	order := context.DefaultQuery("order", "asc")
 	flag := context.DefaultQuery("flag", "")
 
 	//
@@ -55,6 +57,8 @@ func QueryComment(context *gin.Context) {
 	if err == nil && err2 == nil && err3 == nil {
 		r := comment.OrderByIDDesc(nil, order)
 
+		//只返回目标Article
+		r = comment.SetDestArticleId(r, articleIdInt)
 		//只返回id
 		if flag == "len" {
 			r = comment.SelectOnlyIdField(r)
@@ -62,13 +66,23 @@ func QueryComment(context *gin.Context) {
 			//根据参数过滤
 			r = comment.SetCommentListLimit(r, offsetInt, limitInt)
 
-			//只返回目标Article
-			r = comment.SetDestArticleId(r, articleIdInt)
-
 			//返回部分字段
 			r = comment.SelectPreviewField(r)
 		}
 		ret := comment.GetResult(r)
+		//添加上name字段
+		for i := 0; i < len(ret); i++ {
+			com := ret[i]
+			fmt.Println(com.UserId)
+			u := user.User{
+				Uid: com.UserId,
+			}
+			u.GetUser()
+
+			ret[i].AuthorName = u.User
+			ret[i].AuthorHead = u.AvatarUrl
+		}
+
 		context.Set(configure.ContextFiledName, ret)
 		return
 

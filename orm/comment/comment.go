@@ -9,13 +9,15 @@ import (
 
 type Comment struct {
 	Cid         int        `json:"cid" gorm:"column:cid;unique_index;PRIMARY_KEY;"`
-	AncestorCid int        `json:"ancestor_cid,omitempty" gorm:"column:ancestor_cid;"`
+	AncestorCid int        `json:"ancestor_cid" gorm:"column:ancestor_cid;"`
 	Content     string     `json:"content,omitempty" gorm:"column:content;"`
-	ReplyToCId  int        `json:"replyto_id,omitempty" gorm:"column:replyto_cid;"`
+	ReplyToCId  int        `json:"replyto_cid" gorm:"column:replyto_cid;"`
 	ArticleId   int        `json:"article_id,omitempty" gorm:"column:article_id;"`
 	UserId      int        `json:"uid,omitempty" gorm:"column:uid;"`
 	CreateTime  *time.Time `json:"create_time,omitempty" gorm:"column:create_time;-"`
 	LastTime    *time.Time `json:"last_time,omitempty" gorm:"column:last_time;-"`
+	AuthorName  string     `json:"name" gorm:"-"`
+	AuthorHead  string     `json:"avatar" gorm:"-"`
 }
 
 func (t Comment) TableName() string {
@@ -81,7 +83,7 @@ func SelectPreviewField(db *gorm.DB) *gorm.DB {
 	if db == nil {
 		db = orm.GetDB()
 	}
-	return db.Select("cid,ancestor_cid,content,last_time")
+	return db.Select("cid,ancestor_cid,content,last_time,uid")
 }
 
 func SetDestArticleId(db *gorm.DB, articleId int) *gorm.DB {

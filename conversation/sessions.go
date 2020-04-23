@@ -16,7 +16,7 @@ func SetSessionUser(context *gin.Context, us user.User) {
 		Value:  Uid,
 		Path:   "/",
 		Domain: "*",
-		MaxAge: 120 * 10,
+		MaxAge: 120 * 10 * 5,
 	}
 	http.SetCookie(context.Writer, ck)
 }
