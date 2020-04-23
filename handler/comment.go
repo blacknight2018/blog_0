@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"blog_0/configure"
 	"blog_0/conversation"
 	"blog_0/orm/comment"
 	"blog_0/proerror"
@@ -40,20 +41,37 @@ func InsertComment(context *gin.Context) {
 }
 
 func QueryComment(context *gin.Context) {
+	articleId := context.Param("article_id")
+	limit := context.DefaultQuery("limit", "10")
+	offset := context.DefaultQuery("offset", "0")
+	order := context.DefaultQuery("order", "desc")
+	flag := context.DefaultQuery("flag", "")
 
-	/*
-		articleId :=context.Query("article_id")
-		limit := context.DefaultQuery("limit", "10")
-		offset := context.DefaultQuery("offset", "0")
-		order := context.DefaultQuery("order", "desc")
-		flag := context.DefaultQuery("flag", "")
-		limitInt, err := strconv.Atoi(limit)
-		offsetInt, err2 := strconv.Atoi(offset)
+	//
+	limitInt, err := strconv.Atoi(limit)
+	offsetInt, err2 := strconv.Atoi(offset)
+	articleIdInt, err3 := strconv.Atoi(articleId)
+	if err == nil && err2 == nil && err3 == nil {
+		r := comment.OrderByIDDesc(nil, order)
 
+		//只返回id
+		if flag == "len" {
+			r = comment.SelectOnlyIdField(r)
+		} else {
+			//根据参数过滤
+			r = comment.SetCommentListLimits(r, offsetInt, limitInt)
 
-		if err == nil && err2 == nil {
+			//只返回目标Article
+			r = comment.SetDestArticleId(r, articleIdInt)
 
+			//返回部分字段
+			r = comment.SelectPreviewField(r)
 		}
-		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
-	*/
+		ret := comment.GetResult(r)
+		context.Set(configure.ContextFiledName, ret)
+		return
+
+	}
+	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
+
 }

@@ -35,18 +35,14 @@ func QueryArticle(context *gin.Context) {
 
 		r := article.OrderByIDDesc(nil, order)
 		if flag == "len" {
-			r = article.SelectOnlyIdField(nil)
+			r = article.SelectOnlyIdField(r)
 		} else {
-			r = article.GetArticleListLimits(r, offsetInt, limitInt)
+			r = article.SetArticleListLimits(r, offsetInt, limitInt)
 			r = article.SelectPreviewField(r)
 		}
 
 		ret := article.GetResult(r)
-		if err == nil {
-			context.Set(configure.ContextFiledName, ret)
-		} else {
-			panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
-		}
+		context.Set(configure.ContextFiledName, ret)
 		return
 	}
 	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
