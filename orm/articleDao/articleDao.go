@@ -1,4 +1,4 @@
-package article
+package articleDao
 
 import (
 	"blog_0/orm"
@@ -39,50 +39,28 @@ func (t *Article) DeleteArticle() {
 	}
 }
 
-func (t *Article) GetDetail() {
+func (t *Article) QueryDetail() {
 	err := orm.GetDB().First(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
 
-func (t *Article) SaveArticle() {
+func (t *Article) ChangeSaveArticle() {
 	err := orm.GetDB().Save(&t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
-func SetArticleListLimit(db *gorm.DB, offset int, limit int) *gorm.DB {
-	if db == nil {
-		db = orm.GetDB()
-	}
-	return db.Limit(limit).Offset(offset)
-}
 
-func OrderByIDDesc(db *gorm.DB, order string) *gorm.DB {
-	if db == nil {
-		db = orm.GetDB()
-	}
-	return db.Order("id " + order)
-}
-func SelectPreviewField(db *gorm.DB) *gorm.DB {
-	if db == nil {
-		db = orm.GetDB()
-	}
-	return db.Select("id,title,author,description,create_time,last_time,view_img")
-}
-
-func SelectOnlyIdField(db *gorm.DB) *gorm.DB {
-	if db == nil {
-		db = orm.GetDB()
-	}
-	return db.Select("id")
-}
-
-func GetResult(db *gorm.DB) []Article {
+func QueryGetResult(db *gorm.DB) []Article {
 	var articles []Article
 	if db != nil {
 		db.Find(&articles)
 	}
 	return articles
+}
+
+func QueryPrimaryID() string {
+	return "id"
 }

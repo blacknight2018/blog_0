@@ -1,10 +1,13 @@
 package configure
 
+//Handler Const String
 const ContextFiledName = "data"
 const ContextErrorFiledName = "error"
 const ContextEmptyFiled = ""
 const ResponseStatusFiledName = "status"
 const AllowHttpServerCorAddress = "http://127.0.0.1"
+const SelectFiledKeyName = "filed"
+
 const SessionName = "Blog"
 const (
 	U_ROOT   = iota

@@ -1,4 +1,4 @@
-package comment
+package commentDao
 
 import (
 	"blog_0/orm"
@@ -37,7 +37,7 @@ func (t *Comment) InsertComment() {
 		r := Comment{
 			Cid: replyToCid,
 		}
-		r.GetDetail()
+		r.QueryGetDetail()
 		if r.AncestorCid == 0 {
 			ancestorCid = replyToCid
 		} else {
@@ -51,39 +51,11 @@ func (t *Comment) InsertComment() {
 	}
 }
 
-func (t *Comment) GetDetail() {
+func (t *Comment) QueryGetDetail() {
 	err := orm.GetDB().First(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
-}
-
-func OrderByIDDesc(db *gorm.DB, order string) *gorm.DB {
-	if db == nil {
-		db = orm.GetDB()
-	}
-	return db.Order("cid " + order)
-}
-
-func SelectOnlyIdField(db *gorm.DB) *gorm.DB {
-	if db == nil {
-		db = orm.GetDB()
-	}
-	return db.Select("cid")
-}
-
-func SetCommentListLimit(db *gorm.DB, offset int, limit int) *gorm.DB {
-	if db == nil {
-		db = orm.GetDB()
-	}
-	return db.Limit(limit).Offset(offset)
-}
-
-func SelectPreviewField(db *gorm.DB) *gorm.DB {
-	if db == nil {
-		db = orm.GetDB()
-	}
-	return db.Select("cid,ancestor_cid,content,last_time,uid,replyto_cid")
 }
 
 func SetDestArticleId(db *gorm.DB, articleId int) *gorm.DB {
@@ -93,10 +65,14 @@ func SetDestArticleId(db *gorm.DB, articleId int) *gorm.DB {
 	return db.Where("article_id = ?", articleId)
 }
 
-func GetResult(db *gorm.DB) []Comment {
+func QueryGetResult(db *gorm.DB) []Comment {
 	var comments []Comment
 	if db != nil {
 		db.Find(&comments)
 	}
 	return comments
+}
+
+func QueryPrimaryID() string {
+	return "cid"
 }

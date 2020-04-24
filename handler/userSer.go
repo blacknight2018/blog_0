@@ -3,7 +3,7 @@ package handler
 import (
 	"blog_0/configure"
 	"blog_0/conversation"
-	users "blog_0/orm/user"
+	"blog_0/orm/userDao"
 	"blog_0/proerror"
 	"encoding/gob"
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	gob.Register(&users.User{})
+	gob.Register(&userDao.User{})
 }
 func InsertUser(context *gin.Context) {
 	bs, err := context.GetRawData()
@@ -22,7 +22,7 @@ func InsertUser(context *gin.Context) {
 		password := gjson.Get(json, "password").String()
 		avatar := gjson.Get(json, "avatar").String()
 
-		us := users.User{
+		us := userDao.User{
 			User:      user,
 			PassWord:  password,
 			AvatarUrl: avatar,
@@ -44,11 +44,11 @@ func InsertUserLogin(context *gin.Context) {
 		json := string(bs)
 		user := gjson.Get(json, "user").String()
 		password := gjson.Get(json, "password").String()
-		us := users.User{
+		us := userDao.User{
 			User:     user,
 			PassWord: password,
 		}
-		us.CheckUser()
+		us.QueryCheckUser()
 		conversation.SetSessionUser(context, &us)
 		context.Set(configure.ContextFiledName, us)
 
@@ -65,7 +65,7 @@ func QueryUser(context *gin.Context) {
 		us.Uid = uidInt
 	}
 	if us != nil {
-		us.GetUser()
+		us.QueryGetUser()
 		context.Set(configure.ContextFiledName, us)
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})

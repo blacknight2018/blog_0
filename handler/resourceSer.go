@@ -3,7 +3,7 @@ package handler
 import (
 	"blog_0/configure"
 	"blog_0/fileio"
-	"blog_0/orm/upfile"
+	"blog_0/orm/upfileDao"
 	"blog_0/proerror"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -33,15 +33,13 @@ func InsertSingleFileUpload(context *gin.Context) {
 	}()
 	ContentDisposition := form.Header.Get("content-disposition")
 	ContentType := form.Header.Get("content-type")
-	r := upfile.UpFile{
+	r := upfileDao.UpFile{
 		ContentDisposition: ContentDisposition,
 		ContentType:        ContentType,
 		FMd5:               md5ID,
 	}
-	r.InsertFile()
-	r.GetFile()
-	//过滤字段
-	//
+	r.InsertUploadFile()
+	r.QueryGetFile()
 	context.Set(configure.ContextFiledName, r)
 	return
 }
@@ -52,10 +50,10 @@ func QueryFile(context *gin.Context) {
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
-	r := upfile.UpFile{
+	r := upfileDao.UpFile{
 		Fid: fidInt,
 	}
-	r.GetFile()
+	r.QueryGetFile()
 	MD5Id := r.FMd5
 	bytes := fileio.ReadFile(MD5Id)
 	context.Header("content-type", r.ContentType)

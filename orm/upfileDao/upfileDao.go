@@ -1,4 +1,4 @@
-package upfile
+package upfileDao
 
 import (
 	"blog_0/orm"
@@ -18,14 +18,14 @@ func (t UpFile) TableName() string {
 	return "upfiles"
 }
 
-func (t *UpFile) InsertFile() {
+func (t *UpFile) InsertUploadFile() {
 	err := orm.GetDB().Create(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
 
-func (t *UpFile) GetFile() {
+func (t *UpFile) QueryGetFile() {
 	err := orm.GetDB().First(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})

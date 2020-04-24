@@ -2,7 +2,7 @@ package conversation
 
 import (
 	"blog_0/configure"
-	"blog_0/orm/user"
+	"blog_0/orm/userDao"
 	"blog_0/proerror"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -26,7 +26,7 @@ func SessionDestroy(context *gin.Context) {
 	}
 }
 
-func SetSessionUser(context *gin.Context, us *user.User) {
+func SetSessionUser(context *gin.Context, us *userDao.User) {
 	Uid := strconv.Itoa(us.Uid)
 	ck := &http.Cookie{
 		Name:   configure.SessionName,
@@ -38,14 +38,14 @@ func SetSessionUser(context *gin.Context, us *user.User) {
 	http.SetCookie(context.Writer, ck)
 }
 
-func GetSessionUser(context *gin.Context) *user.User {
+func GetSessionUser(context *gin.Context) *userDao.User {
 	UidString, err := context.Cookie(configure.SessionName)
 	UidInt, err2 := strconv.Atoi(UidString)
 	if err == nil && err2 == nil {
-		u := user.User{
+		u := userDao.User{
 			Uid: UidInt,
 		}
-		u.GetUser()
+		u.QueryGetUser()
 		return &u
 	} else {
 		panic(proerror.PanicError{

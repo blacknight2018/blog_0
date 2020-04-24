@@ -8,7 +8,6 @@ import (
 
 func main() {
 
-	//
 	r := gin.Default()
 	//Session profile
 	//store := cookie.NewStore([]byte("secret"))

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"blog_0/configure"
-	"blog_0/conversation"
 	"blog_0/logger"
 	"blog_0/proerror"
 	"encoding/json"
@@ -19,7 +18,7 @@ func setCors(context *gin.Context) {
 /* 检查登录状态 */
 func CheckLoginStatus(context *gin.Context) {
 	//检查是否已经登录
-	conversation.GetSessionUser(context)
+	//conversation.GetSessionUser(context)
 	context.Next()
 }
 

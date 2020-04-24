@@ -3,7 +3,8 @@ package handler
 import (
 	"blog_0/configure"
 	"blog_0/conversation"
-	"blog_0/orm/article"
+	"blog_0/orm/articleDao"
+	"blog_0/orm/utilsDao"
 	"blog_0/proerror"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
@@ -24,32 +25,36 @@ func QueryArticle(context *gin.Context) {
 	offset := context.DefaultQuery("offset", "0")
 	order := context.DefaultQuery("order", "desc")
 	flag := context.DefaultQuery("flag", "")
+	filed := context.QueryArray("filed")
 	limitInt, err := strconv.Atoi(limit)
 	offsetInt, err2 := strconv.Atoi(offset)
+
+	//default filed
+	defaultFiled := [...]string{"id", "title", "author", "description", "create_time", "last_time"}
 	if err == nil && err2 == nil {
-
-		r := article.OrderByIDDesc(nil, order)
+		r := utilsDao.OrderByID(nil, articleDao.QueryPrimaryID(), order)
 		if flag == "len" {
-			r = article.SelectOnlyIdField(r)
+			r = utilsDao.AddSelectFiled(r, "id")
 		} else {
-			r = article.SetArticleListLimit(r, offsetInt, limitInt)
-			r = article.SelectPreviewField(r)
+			r = utilsDao.SetLimit(r, offsetInt, limitInt)
+			r = utilsDao.AddSelectFiledList(r, defaultFiled[:])
+			r = utilsDao.AddSelectFiledList(r, filed)
 		}
-
-		ret := article.GetResult(r)
+		r = utilsDao.SetDbSelect(r)
+		ret := articleDao.QueryGetResult(r)
 		context.Set(configure.ContextFiledName, ret)
 		return
 	}
 	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 }
 func QueryArticleDetail(context *gin.Context) {
-	var id string = context.Param("id")
+	var id = context.Param("id")
 	var idInt, err = strconv.Atoi(id)
 	if err == nil {
-		var article = article.Article{
+		var article = articleDao.Article{
 			Id: idInt,
 		}
-		article.GetDetail()
+		article.QueryDetail()
 		context.Set(configure.ContextFiledName, article)
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
@@ -72,7 +77,7 @@ func InsertArticle(context *gin.Context) {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.FieldEmpty})
 		}
 
-		article := article.Article{
+		article := articleDao.Article{
 			Title:       title,
 			Author:      strconv.Itoa(us.Uid),
 			Content:     content,
@@ -92,7 +97,7 @@ func DeleteArticle(context *gin.Context) {
 	var id string = context.Param("id")
 	var idInt, err = strconv.Atoi(id)
 	if err == nil {
-		var article = article.Article{
+		var article = articleDao.Article{
 			Id: idInt,
 		}
 		article.DeleteArticle()
@@ -111,12 +116,12 @@ func ChangeArticle(context *gin.Context) {
 
 		content := gjson.Get(json, "content").String()
 
-		var article = article.Article{
+		var article = articleDao.Article{
 			Id: idInt,
 		}
-		article.GetDetail()
+		article.QueryDetail()
 		article.Content = content
-		article.SaveArticle()
+		article.ChangeSaveArticle()
 
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})

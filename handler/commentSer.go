@@ -3,10 +3,10 @@ package handler
 import (
 	"blog_0/configure"
 	"blog_0/conversation"
-	"blog_0/orm/comment"
-	"blog_0/orm/user"
+	"blog_0/orm/commentDao"
+	"blog_0/orm/userDao"
+	"blog_0/orm/utilsDao"
 	"blog_0/proerror"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"strconv"
@@ -27,7 +27,7 @@ func InsertComment(context *gin.Context) {
 		articleIdInt, err3 := strconv.Atoi(articleId)
 		us := conversation.GetSessionUser(context)
 		if content != "" && err2 == nil && err3 == nil {
-			c := comment.Comment{
+			c := commentDao.Comment{
 				Content:    content,
 				ReplyToCId: replyToIdInt,
 				ArticleId:  articleIdInt,
@@ -50,34 +50,33 @@ func QueryComment(context *gin.Context) {
 	order := context.DefaultQuery("order", "asc")
 	flag := context.DefaultQuery("flag", "")
 
+	//default filed
+	defaultFiled := [...]string{"cid", "ancestor_cid", "content", "last_time", "uid", "replyto_cid"}
+
 	//
 	limitInt, err := strconv.Atoi(limit)
 	offsetInt, err2 := strconv.Atoi(offset)
 	articleIdInt, err3 := strconv.Atoi(articleId)
 	if err == nil && err2 == nil && err3 == nil {
-		r := comment.OrderByIDDesc(nil, order)
-
+		r := utilsDao.OrderByID(nil, commentDao.QueryPrimaryID(), order)
 		//只返回目标Article
-		r = comment.SetDestArticleId(r, articleIdInt)
-		//只返回id
+		r = commentDao.SetDestArticleId(r, articleIdInt)
+		//只返回cid
 		if flag == "len" {
-			r = comment.SelectOnlyIdField(r)
+			r = utilsDao.AddSelectFiled(r, "cid")
 		} else {
-			//根据参数过滤
-			r = comment.SetCommentListLimit(r, offsetInt, limitInt)
-
-			//返回部分字段
-			r = comment.SelectPreviewField(r)
+			r = utilsDao.SetLimit(r, offsetInt, limitInt)
+			r = utilsDao.AddSelectFiledList(r, defaultFiled[:])
 		}
-		ret := comment.GetResult(r)
+		r = utilsDao.SetDbSelect(r)
+		ret := commentDao.QueryGetResult(r)
 		//添加上name字段
 		for i := 0; i < len(ret); i++ {
 			com := ret[i]
-			fmt.Println(com.UserId)
-			u := user.User{
+			u := userDao.User{
 				Uid: com.UserId,
 			}
-			u.GetUser()
+			u.QueryGetUser()
 
 			ret[i].AuthorName = u.User
 			ret[i].AuthorHead = u.AvatarUrl

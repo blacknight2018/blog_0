@@ -1,4 +1,4 @@
-package user
+package userDao
 
 import (
 	"blog_0/orm"
@@ -29,15 +29,15 @@ func (t *User) InsertUser() {
 }
 
 /* 可以改的更详细一点:用户不存在 密码错误 */
-func (t *User) CheckUser() {
+func (t *User) QueryCheckUser() {
 	err := orm.GetDB().Where("user = ? and password = ?", t.User, t.PassWord).Take(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.LoginFiled})
 	}
 }
 
-/* 根据主键ID 更新信息 */
-func (t *User) GetUser() {
+/* 根据主键ID 获取信息 */
+func (t *User) QueryGetUser() {
 	err := orm.GetDB().First(t).Error
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
