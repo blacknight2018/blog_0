@@ -4,6 +4,8 @@ package configure
 const ContextFiledName = "data"
 const ContextErrorFiledName = "error"
 const ContextEmptyFiled = ""
+const ResponseSuccessName = "ok"
+const ResponseErrorName = "error"
 const ResponseStatusFiledName = "status"
 const AllowHttpServerCorAddress = "http://127.0.0.1"
 const SelectFiledKeyName = "filed"

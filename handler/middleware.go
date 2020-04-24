@@ -50,11 +50,11 @@ func RequestMiddle(context *gin.Context) {
 	if err {
 		//对响应的JSON添加更多的字段
 		obj[configure.ContextFiledName] = resp
-		obj[configure.ResponseStatusFiledName] = "ok"
+		obj[configure.ResponseStatusFiledName] = configure.ResponseSuccessName
 	} else {
 		resp2, err2 := context.Get(configure.ContextErrorFiledName)
 		if err2 {
-			obj[configure.ResponseStatusFiledName] = "error"
+			obj[configure.ResponseStatusFiledName] = configure.ResponseErrorName
 			obj[configure.ContextErrorFiledName] = resp2
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
