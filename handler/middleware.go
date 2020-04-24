@@ -22,7 +22,7 @@ func CheckLoginStatus(context *gin.Context) {
 	if nil == conversation.GetSessionUser(context) {
 		panic(proerror.PanicError{
 			ErrorType: proerror.ErrorOpera,
-			ErrorCode: proerror.LoginError,
+			ErrorCode: proerror.LoginBefore,
 		})
 	}
 	context.Next()

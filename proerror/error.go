@@ -5,6 +5,7 @@ const (
 	ParamError   = iota
 	UnknownError = iota
 	LoginError   = iota
+	LoginBefore  = iota
 )
 
 /* 错误类型 */

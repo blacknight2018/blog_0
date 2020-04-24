@@ -69,6 +69,16 @@ func QueryComment(context *gin.Context) {
 		//只返回cid
 		if flag == "len" {
 			r = utilsDao.AddSelectFiled(r, "cid")
+			r = utilsDao.SetDbSelect(r)
+			ret, ok := commentDao.QueryGetResult(r)
+			if !ok {
+				panic(proerror.PanicError{
+					ErrorType: proerror.ErrorOpera,
+					ErrorCode: proerror.UnknownError,
+				})
+			}
+			context.Set(configure.ContextFiledName, ret)
+			return
 		} else {
 			r = utilsDao.SetLimit(r, offsetInt, limitInt)
 			r = utilsDao.AddSelectFiledList(r, defaultFiled[:])
