@@ -8,6 +8,10 @@ import (
 
 func main() {
 
+	//u:=userDao.User{
+	//	Uid:        1,
+	//}
+	//u.QueryGetUser()
 	r := gin.Default()
 	//Session profile
 	//store := cookie.NewStore([]byte("secret"))
@@ -33,18 +37,18 @@ func main() {
 	}
 	user := r.Group("/user", handler.RequestMiddle, handler.Except)
 	{
-		user.POST("/add", handler.InsertUser, handler.CheckLoginStatus)
+		user.POST("/add", handler.CheckLoginStatus, handler.InsertUser)
 
-		user.GET("/logout", handler.DeleteUserLogout, handler.CheckLoginStatus)
+		user.GET("/logout", handler.DeleteUserLogout)
 		//Set Session
 		user.POST("/login", handler.InsertUserLogin)
 
-		//需要先登录
-		user.GET("", handler.QueryUser, handler.CheckLoginStatus)
+		//查询用户信息不用登录
+		user.GET("", handler.CheckLoginStatus, handler.QueryUser)
 	}
 	comment := r.Group("/comment", handler.RequestMiddle, handler.Except)
 	{
-		comment.POST("", handler.InsertComment, handler.CheckLoginStatus)
+		comment.POST("", handler.CheckLoginStatus, handler.InsertComment)
 
 		comment.GET(("/:article_id"), handler.QueryComment)
 	}

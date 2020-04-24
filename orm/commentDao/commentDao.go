@@ -2,7 +2,6 @@ package commentDao
 
 import (
 	"blog_0/orm"
-	"blog_0/proerror"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -24,7 +23,7 @@ func (t Comment) TableName() string {
 	return "Comments"
 }
 
-func (t *Comment) InsertComment() {
+func (t *Comment) InsertComment() bool {
 	now := time.Now()
 	t.CreateTime = &now
 	t.LastTime = &now
@@ -46,31 +45,27 @@ func (t *Comment) InsertComment() {
 	}
 	t.AncestorCid = ancestorCid
 	err := orm.GetDB().Create(t).Error
-	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+	if err == nil {
+		return true
 	}
+	return false
 }
 
-func (t *Comment) QueryGetDetail() {
+func (t *Comment) QueryGetDetail() bool {
 	err := orm.GetDB().First(t).Error
-	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+	if err == nil {
+		return true
 	}
+	return false
 }
 
-func SetDestArticleId(db *gorm.DB, articleId int) *gorm.DB {
-	if db == nil {
-		db = orm.GetDB()
-	}
-	return db.Where("article_id = ?", articleId)
-}
-
-func QueryGetResult(db *gorm.DB) []Comment {
+func QueryGetResult(db *gorm.DB) ([]Comment, bool) {
 	var comments []Comment
-	if db != nil {
-		db.Find(&comments)
+	err := db.Find(&comments).Error
+	if err == nil {
+		return comments, true
 	}
-	return comments
+	return nil, false
 }
 
 func QueryPrimaryID() string {

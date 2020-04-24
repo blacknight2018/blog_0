@@ -27,9 +27,12 @@ func InsertUser(context *gin.Context) {
 			PassWord:  password,
 			AvatarUrl: avatar,
 		}
-		us.InsertUser()
-	} else {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		if !us.InsertUser() {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
+		}
 	}
 }
 
@@ -48,12 +51,19 @@ func InsertUserLogin(context *gin.Context) {
 			User:     user,
 			PassWord: password,
 		}
-		us.QueryCheckUser()
+		if !us.QueryCheckUserPassWord() {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.LoginError,
+			})
+		}
 		conversation.SetSessionUser(context, &us)
 		context.Set(configure.ContextFiledName, us)
-
 	} else {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		panic(proerror.PanicError{
+			ErrorType: proerror.ErrorOpera,
+			ErrorCode: proerror.UnknownError,
+		})
 	}
 }
 func QueryUser(context *gin.Context) {
@@ -61,13 +71,17 @@ func QueryUser(context *gin.Context) {
 	us := conversation.GetSessionUser(context)
 	uid := context.Query("uid")
 	uidInt, err := strconv.Atoi(uid)
+	if us == nil {
+		us = &userDao.User{}
+	}
 	if uid != "" && err == nil {
 		us.Uid = uidInt
 	}
-	if us != nil {
-		us.QueryGetUser()
-		context.Set(configure.ContextFiledName, us)
-	} else {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+	if !us.QueryGetUser() {
+		panic(proerror.PanicError{
+			ErrorType: proerror.ErrorOpera,
+			ErrorCode: proerror.UnknownError,
+		})
 	}
+	context.Set(configure.ContextFiledName, us)
 }

@@ -3,7 +3,6 @@ package conversation
 import (
 	"blog_0/configure"
 	"blog_0/orm/userDao"
-	"blog_0/proerror"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -47,11 +46,6 @@ func GetSessionUser(context *gin.Context) *userDao.User {
 		}
 		u.QueryGetUser()
 		return &u
-	} else {
-		panic(proerror.PanicError{
-			ErrorType: proerror.ErrorOpera,
-			ErrorCode: proerror.NotLogin,
-		})
 	}
 	return nil
 }

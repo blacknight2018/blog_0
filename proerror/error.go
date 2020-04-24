@@ -2,16 +2,13 @@ package proerror
 
 /* 业务错误码 */
 const (
-	FieldEmpty = iota
-	ParamError = iota
-	FileEmpty  = iota
-	LoginFiled = iota
-	NotLogin   = iota
+	ParamError   = iota
+	UnknownError = iota
+	LoginError   = iota
 )
 
 /* 错误类型 */
 const (
-	ErrorIo    = iota
 	ErrorOpera = iota
 )
 

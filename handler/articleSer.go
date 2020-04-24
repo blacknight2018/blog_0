@@ -41,7 +41,13 @@ func QueryArticle(context *gin.Context) {
 			r = utilsDao.AddSelectFiledList(r, filed)
 		}
 		r = utilsDao.SetDbSelect(r)
-		ret := articleDao.QueryGetResult(r)
+		ret, ok := articleDao.QueryGetResult(r)
+		if !ok {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
+		}
 		context.Set(configure.ContextFiledName, ret)
 		return
 	}
@@ -54,10 +60,15 @@ func QueryArticleDetail(context *gin.Context) {
 		var article = articleDao.Article{
 			Id: idInt,
 		}
-		article.QueryDetail()
+		if !article.QueryDetail() {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
+		}
 		context.Set(configure.ContextFiledName, article)
 	} else {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
 }
 func InsertArticle(context *gin.Context) {
@@ -73,8 +84,8 @@ func InsertArticle(context *gin.Context) {
 
 		//fmt.Println(img)
 		//检查空字段
-		if false == checkParamsSafeStringNotEmpty(title, content, description) {
-			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.FieldEmpty})
+		if false == checkParamsSafeStringNotEmpty(title, content, description, img) {
+			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
 
 		article := articleDao.Article{
@@ -84,11 +95,16 @@ func InsertArticle(context *gin.Context) {
 			Description: description,
 			ViewImg:     img,
 		}
-		article.InsertArticle()
+		if !article.InsertArticle() {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
+		}
 		context.Set(configure.ContextFiledName, ret)
 
 	} else {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
 }
 
@@ -100,10 +116,15 @@ func DeleteArticle(context *gin.Context) {
 		var article = articleDao.Article{
 			Id: idInt,
 		}
-		article.DeleteArticle()
+		if !article.DeleteArticle() {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
+		}
 		context.Set(configure.ContextFiledName, ret)
 	} else {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
 }
 
@@ -119,11 +140,21 @@ func ChangeArticle(context *gin.Context) {
 		var article = articleDao.Article{
 			Id: idInt,
 		}
-		article.QueryDetail()
+		if !article.QueryDetail() {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
+		}
 		article.Content = content
-		article.ChangeSaveArticle()
+		if !article.ChangeSaveArticle() {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
+		}
 
 	} else {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
 }

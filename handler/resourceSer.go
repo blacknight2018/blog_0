@@ -13,35 +13,40 @@ import (
 func InsertSingleFileUpload(context *gin.Context) {
 	form, err := context.FormFile("file")
 	if err != nil || form.Size == 0 {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.FileEmpty})
+		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
 	file, err := form.Open()
 	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
-	md5ID := fileio.SaveFile(bytes)
-	//保持数据一致性，当以下操作发生错误时，删除掉文件,向上抛出异常
-	defer func() {
-		if err := recover(); err != nil {
-			fileio.RemoveFile(md5ID)
-			panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+	md5ID, ok := fileio.SaveFile(bytes)
+	if ok {
+		ContentDisposition := form.Header.Get("content-disposition")
+		ContentType := form.Header.Get("content-type")
+		r := upfileDao.UpFile{
+			ContentDisposition: ContentDisposition,
+			ContentType:        ContentType,
+			FMd5:               md5ID,
 		}
-	}()
-	ContentDisposition := form.Header.Get("content-disposition")
-	ContentType := form.Header.Get("content-type")
-	r := upfileDao.UpFile{
-		ContentDisposition: ContentDisposition,
-		ContentType:        ContentType,
-		FMd5:               md5ID,
+		ok = r.InsertUploadFile()
+		if ok {
+			if r.QueryGetFile() {
+				context.Set(configure.ContextFiledName, r)
+				return
+			}
+		}
+		panic(proerror.PanicError{
+			ErrorType: proerror.ErrorOpera,
+			ErrorCode: proerror.UnknownError,
+		})
+
 	}
-	r.InsertUploadFile()
-	r.QueryGetFile()
-	context.Set(configure.ContextFiledName, r)
-	return
+	fileio.RemoveFile(md5ID)
+	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 }
 
 func QueryFile(context *gin.Context) {
@@ -53,12 +58,21 @@ func QueryFile(context *gin.Context) {
 	r := upfileDao.UpFile{
 		Fid: fidInt,
 	}
-	r.QueryGetFile()
+	if !r.QueryGetFile() {
+		panic(proerror.PanicError{
+			ErrorType: proerror.ErrorOpera,
+			ErrorCode: proerror.UnknownError,
+		})
+	}
 	MD5Id := r.FMd5
-	bytes := fileio.ReadFile(MD5Id)
-	context.Header("content-type", r.ContentType)
-	context.Header("content-disposition", r.ContentDisposition)
-	context.Writer.Write(bytes)
-	context.Writer.Flush()
+	bytes, ok := fileio.ReadFile(MD5Id)
+	if ok {
+		context.Header("content-type", r.ContentType)
+		context.Header("content-disposition", r.ContentDisposition)
+		context.Writer.Write(bytes)
+		context.Writer.Flush()
+		return
+	}
+	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 
 }

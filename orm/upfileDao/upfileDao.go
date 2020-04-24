@@ -2,7 +2,6 @@ package upfileDao
 
 import (
 	"blog_0/orm"
-	"blog_0/proerror"
 	"time"
 )
 
@@ -18,16 +17,18 @@ func (t UpFile) TableName() string {
 	return "upfiles"
 }
 
-func (t *UpFile) InsertUploadFile() {
+func (t *UpFile) InsertUploadFile() bool {
 	err := orm.GetDB().Create(t).Error
-	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+	if err == nil {
+		return true
 	}
+	return false
 }
 
-func (t *UpFile) QueryGetFile() {
+func (t *UpFile) QueryGetFile() bool {
 	err := orm.GetDB().First(t).Error
-	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+	if err == nil {
+		return true
 	}
+	return false
 }

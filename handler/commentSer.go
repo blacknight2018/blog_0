@@ -33,13 +33,18 @@ func InsertComment(context *gin.Context) {
 				ArticleId:  articleIdInt,
 				UserId:     us.Uid,
 			}
-			c.InsertComment()
+			if !c.InsertComment() {
+				panic(proerror.PanicError{
+					ErrorType: proerror.ErrorOpera,
+					ErrorCode: proerror.UnknownError,
+				})
+			}
 			context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
 	} else {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.UnknownError})
 	}
 }
 
@@ -69,14 +74,25 @@ func QueryComment(context *gin.Context) {
 			r = utilsDao.AddSelectFiledList(r, defaultFiled[:])
 		}
 		r = utilsDao.SetDbSelect(r)
-		ret := commentDao.QueryGetResult(r)
+		ret, ok := commentDao.QueryGetResult(r)
+		if !ok {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
+		}
 		//添加上name字段
 		for i := 0; i < len(ret); i++ {
 			com := ret[i]
 			u := userDao.User{
 				Uid: com.UserId,
 			}
-			u.QueryGetUser()
+			if !u.QueryGetUser() {
+				panic(proerror.PanicError{
+					ErrorType: proerror.ErrorOpera,
+					ErrorCode: proerror.UnknownError,
+				})
+			}
 
 			ret[i].AuthorName = u.User
 			ret[i].AuthorHead = u.AvatarUrl

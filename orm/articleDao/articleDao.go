@@ -2,7 +2,6 @@ package articleDao
 
 import (
 	"blog_0/orm"
-	"blog_0/proerror"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -23,42 +22,47 @@ func (t Article) TableName() string {
 	return "articles"
 }
 
-func (t *Article) InsertArticle() {
+func (t *Article) InsertArticle() bool {
 	now := time.Now()
 	t.CreateTime = &now
 	t.LastTime = &now
 	err := orm.GetDB().Create(t).Error
 	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		return false
 	}
+	return true
 }
-func (t *Article) DeleteArticle() {
+func (t *Article) DeleteArticle() bool {
 	err := orm.GetDB().Delete(t).Error
 	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		return false
 	}
+	return true
 }
 
-func (t *Article) QueryDetail() {
+func (t *Article) QueryDetail() bool {
 	err := orm.GetDB().First(t).Error
 	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		return false
 	}
+	return true
 }
 
-func (t *Article) ChangeSaveArticle() {
+func (t *Article) ChangeSaveArticle() bool {
 	err := orm.GetDB().Save(&t).Error
 	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+		return false
 	}
+	return true
 }
 
-func QueryGetResult(db *gorm.DB) []Article {
+func QueryGetResult(db *gorm.DB) ([]Article, bool) {
 	var articles []Article
-	if db != nil {
-		db.Find(&articles)
+	err := db.Find(&articles).Error
+	if err != nil {
+		return nil, false
 	}
-	return articles
+	return articles, true
 }
 
 func QueryPrimaryID() string {

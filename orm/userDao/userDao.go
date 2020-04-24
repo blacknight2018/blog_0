@@ -2,7 +2,6 @@ package userDao
 
 import (
 	"blog_0/orm"
-	"blog_0/proerror"
 	"time"
 )
 
@@ -19,27 +18,28 @@ func (t User) TableName() string {
 	return "users"
 }
 
-func (t *User) InsertUser() {
+func (t *User) InsertUser() bool {
 	now := time.Now()
 	t.CreateTime = &now
 	err := orm.GetDB().Create(t).Error
-	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+	if err == nil {
+		return true
 	}
+	return false
 }
 
-/* 可以改的更详细一点:用户不存在 密码错误 */
-func (t *User) QueryCheckUser() {
+func (t *User) QueryCheckUserPassWord() bool {
 	err := orm.GetDB().Where("user = ? and password = ?", t.User, t.PassWord).Take(t).Error
-	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.LoginFiled})
+	if err == nil {
+		return true
 	}
+	return false
 }
 
-/* 根据主键ID 获取信息 */
-func (t *User) QueryGetUser() {
+func (t *User) QueryGetUser() bool {
 	err := orm.GetDB().First(t).Error
-	if err != nil {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
+	if err == nil && t.Uid > 0 {
+		return true
 	}
+	return false
 }
