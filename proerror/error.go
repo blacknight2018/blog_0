@@ -6,7 +6,6 @@ const (
 	ParamError = iota
 	FileEmpty  = iota
 	LoginFiled = iota
-	Cookie     = iota
 	NotLogin   = iota
 )
 

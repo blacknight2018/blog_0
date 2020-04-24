@@ -50,7 +50,7 @@ func GetSessionUser(context *gin.Context) *user.User {
 	} else {
 		panic(proerror.PanicError{
 			ErrorType: proerror.ErrorOpera,
-			ErrorCode: proerror.Cookie,
+			ErrorCode: proerror.NotLogin,
 		})
 	}
 	return nil

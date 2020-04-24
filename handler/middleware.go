@@ -2,6 +2,7 @@ package handler
 
 import (
 	"blog_0/configure"
+	"blog_0/conversation"
 	"blog_0/logger"
 	"blog_0/proerror"
 	"encoding/json"
@@ -15,17 +16,21 @@ func setCors(context *gin.Context) {
 	context.Header("Access-Control-Allow-Credentials", "true")
 }
 
+/* 检查登录状态 */
+func CheckLoginStatus(context *gin.Context) {
+	//检查是否已经登录
+	conversation.GetSessionUser(context)
+	context.Next()
+}
+
 /* 处理请求前后 */
 func RequestMiddle(context *gin.Context) {
+
 	//允许跨域
 	setCors(context)
 	//
-
-	//检查是否已经登录
-
-	//
-
 	context.Next()
+	//
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -35,9 +40,8 @@ func RequestMiddle(context *gin.Context) {
 
 	var obj = make(map[string]interface{})
 
-	//运行到这里表面没有异常和错误
+	//检查是否有错误发生
 	resp, err := context.Get(configure.ContextFiledName)
-
 	if err {
 		//对响应的JSON添加更多的字段
 		obj[configure.ContextFiledName] = resp
@@ -76,9 +80,9 @@ func Except(context *gin.Context) {
 					//json, _ := json.Marshal(&err)
 					//context.Writer.WriteString(string(json))
 				}
-				//阻止传播
-				//context.Abort()
 				context.Set(configure.ContextErrorFiledName, err)
+				//阻止传播给下层
+				context.Abort()
 			} else {
 				//记录日志
 				logger.SimpleLog()
