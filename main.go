@@ -11,19 +11,20 @@ func main() {
 	//
 	r := gin.Default()
 	//Session profile
-
 	//store := cookie.NewStore([]byte("secret"))
 	//r.Use(sessions.Sessions(configure.SessionName, store))
 
 	//需要先登录
 	article := r.Group("/article", handler.RequestMiddle, handler.Except)
 	{
-		article.OPTIONS("")
+		//article.OPTIONS("")
 
 		article.GET("", handler.QueryArticle)
 		article.POST("", handler.InsertArticle)
 		article.PUT("/:id", handler.ChangeArticle)
+
 		article.DELETE("/:id", handler.DeleteArticle)
+
 		article.GET("/:id/detail", handler.QueryArticleDetail)
 	}
 
@@ -40,7 +41,6 @@ func main() {
 
 		user.GET("/logout", handler.DeleteUserLogout)
 		//Set Session
-		user.OPTIONS("/login")
 		user.POST("/login", handler.InsertUserLogin)
 
 		//需要先登录
@@ -48,10 +48,11 @@ func main() {
 	}
 	comment := r.Group("/comment", handler.RequestMiddle, handler.Except)
 	{
-		comment.OPTIONS("")
 		comment.POST("", handler.InsertComment)
 
 		comment.GET(("/:article_id"), handler.QueryComment)
 	}
+	//解决CORS问题
+	r.OPTIONS("/*all", handler.RequestMiddle, handler.Except)
 	r.Run(":8080")
 }
