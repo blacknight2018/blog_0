@@ -19,12 +19,6 @@ func checkParamsSafeStringNotEmpty(args ...string) bool {
 	return true
 }
 
-//@Accept json
-//@Produce json
-//@Summary Query
-//@Description Query Articles
-//@Router /article/
-//@Param limit offset order flag
 func QueryArticle(context *gin.Context) {
 	limit := context.DefaultQuery("limit", "10")
 	offset := context.DefaultQuery("offset", "0")

@@ -14,7 +14,7 @@ import (
 func init() {
 	gob.Register(&users.User{})
 }
-func UserInsert(context *gin.Context) {
+func InsertUser(context *gin.Context) {
 	bs, err := context.GetRawData()
 	if err == nil {
 		json := string(bs)
@@ -33,12 +33,12 @@ func UserInsert(context *gin.Context) {
 	}
 }
 
-func UserLogout(context *gin.Context) {
+func DeleteUserLogout(context *gin.Context) {
 	conversation.SessionDestroy(context)
 	context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
 }
 
-func UserLogin(context *gin.Context) {
+func InsertUserLogin(context *gin.Context) {
 	bs, err := context.GetRawData()
 	if err == nil {
 		json := string(bs)
@@ -56,7 +56,7 @@ func UserLogin(context *gin.Context) {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
-func UserQuery(context *gin.Context) {
+func QueryUser(context *gin.Context) {
 	//默认查询自己，
 	us := conversation.GetSessionUser(context)
 	uid := context.Query("uid")

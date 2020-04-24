@@ -30,21 +30,21 @@ func main() {
 	//需要先登录
 	resource := r.Group("/file", handler.RequestMiddle, handler.Except)
 	{
-		resource.POST("/", handler.SingleFileUpload)
-		resource.GET("/:id", handler.GetFile)
+		resource.POST("/", handler.InsertSingleFileUpload)
+		resource.GET("/:id", handler.QueryFile)
 	}
 	user := r.Group("/user", handler.RequestMiddle, handler.Except)
 	{
 		//需要先登录
-		user.POST("/add", handler.UserInsert)
+		user.POST("/add", handler.InsertUser)
 
-		user.GET("/logout", handler.UserLogout)
+		user.GET("/logout", handler.DeleteUserLogout)
 		//Set Session
 		user.OPTIONS("/login")
-		user.POST("/login", handler.UserLogin)
+		user.POST("/login", handler.InsertUserLogin)
 
 		//需要先登录
-		user.GET("", handler.UserQuery)
+		user.GET("", handler.QueryUser)
 	}
 	comment := r.Group("/comment", handler.RequestMiddle, handler.Except)
 	{

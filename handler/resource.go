@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func SingleFileUpload(context *gin.Context) {
+func InsertSingleFileUpload(context *gin.Context) {
 	form, err := context.FormFile("file")
 	if err != nil || form.Size == 0 {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.FileEmpty})
@@ -46,7 +46,7 @@ func SingleFileUpload(context *gin.Context) {
 	return
 }
 
-func GetFile(context *gin.Context) {
+func QueryFile(context *gin.Context) {
 	fid := context.Param("id")
 	fidInt, err := strconv.Atoi(fid)
 	if err != nil {
