@@ -32,6 +32,12 @@ func UserInsert(context *gin.Context) {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorIo})
 	}
 }
+
+func UserLogout(context *gin.Context) {
+	conversation.SessionDestroy(context)
+	context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
+}
+
 func UserLogin(context *gin.Context) {
 	bs, err := context.GetRawData()
 	if err == nil {
@@ -43,7 +49,7 @@ func UserLogin(context *gin.Context) {
 			PassWord: password,
 		}
 		us.CheckUser()
-		conversation.SetSessionUser(context, us)
+		conversation.SetSessionUser(context, &us)
 		context.Set(configure.ContextFiledName, us)
 
 	} else {

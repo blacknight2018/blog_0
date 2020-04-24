@@ -34,7 +34,7 @@ func InsertComment(context *gin.Context) {
 				UserId:     us.Uid,
 			}
 			c.InsertComment()
-			context.Set(configure.ContextFiledName, "")
+			context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}

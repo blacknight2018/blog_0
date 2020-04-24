@@ -7,6 +7,7 @@ const (
 	FileEmpty  = iota
 	LoginFiled = iota
 	Cookie     = iota
+	NotLogin   = iota
 )
 
 /* 错误类型 */

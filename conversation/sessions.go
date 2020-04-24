@@ -9,7 +9,24 @@ import (
 	"strconv"
 )
 
-func SetSessionUser(context *gin.Context, us user.User) {
+var onlineUser = make(map[int]bool)
+
+func SessionDestroy(context *gin.Context) {
+	us := GetSessionUser(context)
+	if us != nil {
+		Uid := strconv.Itoa(us.Uid)
+		ck := &http.Cookie{
+			Name:   configure.SessionName,
+			Value:  Uid,
+			Path:   "/",
+			Domain: "*",
+			MaxAge: 1,
+		}
+		http.SetCookie(context.Writer, ck)
+	}
+}
+
+func SetSessionUser(context *gin.Context, us *user.User) {
 	Uid := strconv.Itoa(us.Uid)
 	ck := &http.Cookie{
 		Name:   configure.SessionName,
@@ -20,17 +37,13 @@ func SetSessionUser(context *gin.Context, us user.User) {
 	}
 	http.SetCookie(context.Writer, ck)
 }
+
 func GetSessionUser(context *gin.Context) *user.User {
 	UidString, err := context.Cookie(configure.SessionName)
 	UidInt, err2 := strconv.Atoi(UidString)
 	if err == nil && err2 == nil {
 		u := user.User{
-			Uid:        UidInt,
-			User:       "",
-			PassWord:   "",
-			Type:       0,
-			AvatarUrl:  "",
-			CreateTime: nil,
+			Uid: UidInt,
 		}
 		u.GetUser()
 		return &u

@@ -38,6 +38,7 @@ func main() {
 		//需要先登录
 		user.POST("/add", handler.UserInsert)
 
+		user.GET("/logout", handler.UserLogout)
 		//Set Session
 		user.OPTIONS("/login")
 		user.POST("/login", handler.UserLogin)
@@ -52,5 +53,5 @@ func main() {
 
 		comment.GET(("/:article_id"), handler.QueryComment)
 	}
-	r.Run(":81")
+	r.Run(":8080")
 }

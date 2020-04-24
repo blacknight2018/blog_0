@@ -9,7 +9,7 @@ import (
 )
 
 func setCors(context *gin.Context) {
-	context.Header("Access-Control-Allow-Origin", "http://127.0.0.1:8080")
+	context.Header("Access-Control-Allow-Origin", configure.AllowHttpServerCorAddress)
 	context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	context.Header("Access-Control-Allow-Headers", "Action, Module, X-PINGOTHER, Content-Type, Content-Disposition")
 	context.Header("Access-Control-Allow-Credentials", "true")

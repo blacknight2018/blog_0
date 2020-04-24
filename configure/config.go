@@ -2,7 +2,9 @@ package configure
 
 const ContextFiledName = "data"
 const ContextErrorFiledName = "error"
+const ContextEmptyFiled = ""
 const ResponseStatusFiledName = "status"
+const AllowHttpServerCorAddress = "http://127.0.0.1"
 const SessionName = "Blog"
 const (
 	U_ROOT   = iota
