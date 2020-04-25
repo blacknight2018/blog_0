@@ -30,9 +30,9 @@ func main() {
 	}
 
 	//需要先登录
-	resource := r.Group("/file", handler.RequestMiddle, handler.Except, handler.CheckLoginStatus)
+	resource := r.Group("/file", handler.RequestMiddle, handler.Except)
 	{
-		resource.POST("/", handler.InsertSingleFileUpload)
+		resource.POST("", handler.CheckLoginStatus, handler.InsertSingleFileUpload)
 		resource.GET("/:id", handler.QueryFile)
 	}
 	user := r.Group("/user", handler.RequestMiddle, handler.Except)
