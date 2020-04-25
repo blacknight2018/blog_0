@@ -40,7 +40,7 @@ func InsertUser(context *gin.Context) {
 func DeleteUserLogout(context *gin.Context) {
 	conversation.SessionDestroy(context)
 	//context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
-	utils.SetRetObjectToJSON(context, configure.ContextEmptyFiled)
+	utils.SetRetObjectToJSONWithThrowException(context, configure.ContextEmptyFiled)
 }
 
 func InsertUserLogin(context *gin.Context) {
@@ -61,7 +61,7 @@ func InsertUserLogin(context *gin.Context) {
 		}
 		conversation.SetSessionUser(context, &us)
 		//context.Set(configure.ContextFiledName, us)
-		utils.SetRetObjectToJSON(context, us)
+		utils.SetRetObjectToJSONWithThrowException(context, us)
 	} else {
 		panic(proerror.PanicError{
 			ErrorType: proerror.ErrorOpera,
@@ -86,6 +86,6 @@ func QueryUser(context *gin.Context) {
 			ErrorCode: proerror.UnknownError,
 		})
 	}
-	utils.SetRetObjectToJSON(context, us)
+	utils.SetRetObjectToJSONWithThrowException(context, us)
 	//context.Set(configure.ContextFiledName, us)
 }

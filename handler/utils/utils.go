@@ -5,12 +5,13 @@ import (
 	"blog_0/proerror"
 	"encoding/base64"
 	"encoding/json"
+	"github.com/donnie4w/json4g"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
 
 //提取出的公共接口，将对象转为json返回到前端，如果错误直接抛出
-func SetRetObjectToJSON(context *gin.Context, obj interface{}) {
+func SetRetObjectToJSONWithThrowException(context *gin.Context, obj interface{}) {
 	bytes, err := json.Marshal(&obj)
 	if err == nil {
 		context.Set(configure.ContextFiledName, string(bytes))
@@ -20,6 +21,28 @@ func SetRetObjectToJSON(context *gin.Context, obj interface{}) {
 		ErrorType: proerror.ErrorOpera,
 		ErrorCode: proerror.UnknownError,
 	})
+}
+
+func JsonParseWithThrowException(obj interface{}) string {
+	bytes, err := json.Marshal(obj)
+	if err != nil {
+		panic(proerror.PanicError{
+			ErrorType: proerror.ErrorOpera,
+			ErrorCode: proerror.UnknownError,
+		})
+	}
+	return string(bytes)
+}
+
+func JsonLoadByStringWithThrowException(s string) *json4g.JsonNode {
+	r, err := json4g.LoadByString(s)
+	if err != nil {
+		panic(proerror.PanicError{
+			ErrorType: proerror.ErrorOpera,
+			ErrorCode: proerror.UnknownError,
+		})
+	}
+	return r
 }
 
 //去除字符串中的回车符

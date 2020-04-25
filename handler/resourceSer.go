@@ -36,7 +36,7 @@ func InsertSingleFileUpload(context *gin.Context) {
 		if ok {
 			if r.QueryGetFile() {
 				//context.Set(configure.ContextFiledName, r)
-				utils.SetRetObjectToJSON(context, r)
+				utils.SetRetObjectToJSONWithThrowException(context, r)
 				return
 			}
 		}

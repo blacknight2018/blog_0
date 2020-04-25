@@ -43,7 +43,7 @@ func InsertComment(context *gin.Context) {
 				})
 			}
 			//context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
-			utils.SetRetObjectToJSON(context, configure.ContextEmptyFiled)
+			utils.SetRetObjectToJSONWithThrowException(context, configure.ContextEmptyFiled)
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
@@ -76,7 +76,7 @@ func QueryComment(context *gin.Context) {
 			r = utilsDao.SetDbSelect(r)
 			ret, ok := commentDao.QueryGetResult(r)
 			if ok {
-				utils.SetRetObjectToJSON(context, ret)
+				utils.SetRetObjectToJSONWithThrowException(context, ret)
 				return
 			}
 			panic(proerror.PanicError{
