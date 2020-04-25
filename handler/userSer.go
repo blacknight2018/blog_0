@@ -87,5 +87,4 @@ func QueryUser(context *gin.Context) {
 		})
 	}
 	utils.SetSuccessRetObjectToJSONWithThrowException(context, us)
-	//context.Set(configure.ContextFiledName, us)
 }

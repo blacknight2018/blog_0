@@ -81,8 +81,6 @@ func Except(context *gin.Context) {
 					//json, _ := json.Marshal(&err)
 					//context.Writer.WriteString(string(json))
 				}
-				//context.Set(configure.ContextErrorFiledName, err)
-				//utils.SetSuccessRetObjectToJSONWithThrowException(context,err)
 				utils.SetFailedRetObjectToJSONWithThrowException(context, err)
 				//阻止传播给下层
 				context.Abort()

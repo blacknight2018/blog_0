@@ -74,7 +74,7 @@ func QueryArticleDetail(context *gin.Context) {
 		article.Description = ""
 
 		//去除html中的换车 jsongo有bug不会转义,但是由于base64不会有空格换行，没事
-		article.Content = utils.RemoveEnterChar(article.Content)
+		//article.Content = utils.RemoveEnterChar(article.Content)
 
 		//查询出文章附带的文件列表返回
 		node := jsongo.Node{}

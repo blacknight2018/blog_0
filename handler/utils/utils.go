@@ -43,7 +43,7 @@ func JsonParseWithThrowException(obj interface{}) string {
 	if err != nil {
 		panic(proerror.PanicError{
 			ErrorType: proerror.ErrorOpera,
-			ErrorCode: proerror.UnknownError,
+			ErrorCode: proerror.JsonParseError,
 		})
 	}
 	return string(bytes)
@@ -54,7 +54,7 @@ func JsonGoParseWithThrowException(node *jsongo.Node) string {
 	if err != nil {
 		panic(proerror.PanicError{
 			ErrorType: proerror.ErrorOpera,
-			ErrorCode: proerror.UnknownError,
+			ErrorCode: proerror.JsonParseError,
 		})
 	}
 	return string(r)
@@ -66,7 +66,7 @@ func JsonGoUnmarshalToObjectWithThrowException(jsont string) jsongo.Node {
 	if err != nil {
 		panic(proerror.PanicError{
 			ErrorType: proerror.ErrorOpera,
-			ErrorCode: proerror.UnknownError,
+			ErrorCode: proerror.JsonParseError,
 		})
 	}
 	return r2

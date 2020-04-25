@@ -2,10 +2,11 @@ package proerror
 
 /* 业务错误码 */
 const (
-	ParamError   = iota
-	UnknownError = iota
-	LoginError   = iota
-	LoginBefore  = iota
+	ParamError     = iota
+	UnknownError   = iota
+	LoginError     = iota
+	LoginBefore    = iota
+	JsonParseError = iota
 )
 
 /* 错误类型 */
