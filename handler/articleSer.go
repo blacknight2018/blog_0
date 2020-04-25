@@ -8,8 +8,7 @@ import (
 	"blog_0/orm/upfileDao/other"
 	"blog_0/orm/utilsDao"
 	"blog_0/proerror"
-	"fmt"
-	"github.com/donnie4w/json4g"
+	"github.com/bennyscetbun/jsongo"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"strconv"
@@ -52,8 +51,7 @@ func QueryArticle(context *gin.Context) {
 				ErrorCode: proerror.UnknownError,
 			})
 		}
-		//context.Set(configure.ContextFiledName, ret)
-		utils.SetRetObjectToJSONWithThrowException(context, ret)
+		utils.SetSuccessRetObjectToJSONWithThrowException(context, ret)
 		return
 	}
 	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
@@ -79,8 +77,9 @@ func QueryArticleDetail(context *gin.Context) {
 		article.Content = utils.RemoveEnterChar(article.Content)
 
 		//查询出文章附带的文件列表返回
-		json := utils.JsonParseWithThrowException(article)
-		node := utils.JsonLoadByStringWithThrowException(json)
+		node := jsongo.Node{}
+		node.UnmarshalJSON([]byte(utils.JsonParseWithThrowException(article)))
+
 		type fileStruct struct {
 			Fid  string `json:"fid"`
 			Name string `json:"name"`
@@ -93,12 +92,9 @@ func QueryArticleDetail(context *gin.Context) {
 				fileName,
 			})
 		}
-		fsJson := utils.JsonParseWithThrowException(fs)
-		fmt.Println(fsJson)
-		fmt.Println(utils.JsonLoadByStringWithThrowException(fsJson).ToString())
-		node.AddNode(json4g.NowJsonNodeByString("file", fsJson))
+		node.At("file").Val(fs)
 
-		context.Set(configure.ContextFiledName, node.ToString())
+		context.Set(configure.ContextFiledName, utils.JsonGoParseWithThrowException(&node))
 
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
@@ -136,7 +132,7 @@ func InsertArticle(context *gin.Context) {
 				ErrorCode: proerror.UnknownError,
 			})
 		}
-		utils.SetRetObjectToJSONWithThrowException(context, ret)
+		utils.SetSuccessRetObjectToJSONWithThrowException(context, ret)
 
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
@@ -157,7 +153,7 @@ func DeleteArticle(context *gin.Context) {
 				ErrorCode: proerror.UnknownError,
 			})
 		}
-		utils.SetRetObjectToJSONWithThrowException(context, ret)
+		utils.SetSuccessRetObjectToJSONWithThrowException(context, ret)
 		//context.Set(configure.ContextFiledName, ret)
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})

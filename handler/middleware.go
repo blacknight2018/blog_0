@@ -3,9 +3,10 @@ package handler
 import (
 	"blog_0/configure"
 	"blog_0/conversation"
+	"blog_0/handler/utils"
 	"blog_0/logger"
 	"blog_0/proerror"
-	"github.com/donnie4w/json4g"
+	"github.com/bennyscetbun/jsongo"
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,26 +44,28 @@ func RequestMiddle(context *gin.Context) {
 		}
 	}()
 
+	//ContextFiledName 域 必须是json
 	resp, err := context.Get(configure.ContextFiledName)
-	respString := resp.(string)
-	var rootNode = &json4g.JsonNode{}
+	var ret jsongo.Node = jsongo.Node{}
 	if err {
-		rootNode.AddNode(json4g.NowJsonNodeByString(configure.ContextFiledName, respString))
-		rootNode.AddNode(json4g.NowJsonNode(configure.ResponseStatusFiledName, configure.ResponseSuccessName))
-		//node.AddNode(json4g.NowJsonNode(configure.ResponseStatusFiledName, configure.ResponseSuccessName))
-		//node.AddNode(json4g.NowJsonNodeByString(configure.ContextFiledName, respString))
+		respString := resp.(string)
+		r2 := utils.JsonGoUnmarshalToObjectWithThrowException(respString)
+		ret.At(configure.ContextFiledName).Val(r2)
+		ret.At(configure.ResponseStatusFiledName).Val(configure.ResponseSuccessName)
 
 	} else {
 		resp2, err2 := context.Get(configure.ContextErrorFiledName)
 		resp2String := resp2.(string)
 		if err2 {
-			rootNode.AddNode(json4g.NowJsonNode(configure.ResponseStatusFiledName, configure.ResponseErrorName))
-			rootNode.AddNode(json4g.NowJsonNode(configure.ContextErrorFiledName, resp2String))
+			r2 := utils.JsonGoUnmarshalToObjectWithThrowException(resp2String)
+			ret.At(configure.ContextErrorFiledName).Val(r2)
+			ret.At(configure.ResponseStatusFiledName).Val(configure.ResponseErrorName)
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
 	}
-	context.Writer.WriteString(rootNode.ToString())
+	context.Writer.WriteString(utils.JsonGoParseWithThrowException(&ret))
+	context.Writer.Flush()
 }
 
 /* 处理异常 */
@@ -78,7 +81,9 @@ func Except(context *gin.Context) {
 					//json, _ := json.Marshal(&err)
 					//context.Writer.WriteString(string(json))
 				}
-				context.Set(configure.ContextErrorFiledName, err)
+				//context.Set(configure.ContextErrorFiledName, err)
+				//utils.SetSuccessRetObjectToJSONWithThrowException(context,err)
+				utils.SetFailedRetObjectToJSONWithThrowException(context, err)
 				//阻止传播给下层
 				context.Abort()
 			}

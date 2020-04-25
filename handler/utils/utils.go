@@ -5,16 +5,31 @@ import (
 	"blog_0/proerror"
 	"encoding/base64"
 	"encoding/json"
-	"github.com/donnie4w/json4g"
+	"fmt"
+	"github.com/bennyscetbun/jsongo"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
 
 //提取出的公共接口，将对象转为json返回到前端，如果错误直接抛出
-func SetRetObjectToJSONWithThrowException(context *gin.Context, obj interface{}) {
+func SetSuccessRetObjectToJSONWithThrowException(context *gin.Context, obj interface{}) {
+
 	bytes, err := json.Marshal(&obj)
+	fmt.Println(string(bytes))
 	if err == nil {
 		context.Set(configure.ContextFiledName, string(bytes))
+		return
+	}
+	panic(proerror.PanicError{
+		ErrorType: proerror.ErrorOpera,
+		ErrorCode: proerror.UnknownError,
+	})
+}
+
+func SetFailedRetObjectToJSONWithThrowException(context *gin.Context, obj interface{}) {
+	bytes, err := json.Marshal(&obj)
+	if err == nil {
+		context.Set(configure.ContextErrorFiledName, string(bytes))
 		return
 	}
 	panic(proerror.PanicError{
@@ -34,15 +49,27 @@ func JsonParseWithThrowException(obj interface{}) string {
 	return string(bytes)
 }
 
-func JsonLoadByStringWithThrowException(s string) *json4g.JsonNode {
-	r, err := json4g.LoadByString(s)
+func JsonGoParseWithThrowException(node *jsongo.Node) string {
+	r, err := json.MarshalIndent(node, "", "")
 	if err != nil {
 		panic(proerror.PanicError{
 			ErrorType: proerror.ErrorOpera,
 			ErrorCode: proerror.UnknownError,
 		})
 	}
-	return r
+	return string(r)
+}
+
+func JsonGoUnmarshalToObjectWithThrowException(jsont string) jsongo.Node {
+	r2 := jsongo.Node{}
+	err := json.Unmarshal([]byte(jsont), &r2)
+	if err != nil {
+		panic(proerror.PanicError{
+			ErrorType: proerror.ErrorOpera,
+			ErrorCode: proerror.UnknownError,
+		})
+	}
+	return r2
 }
 
 //去除字符串中的回车符

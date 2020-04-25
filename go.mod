@@ -3,7 +3,7 @@ module blog_0
 go 1.14
 
 require (
-	github.com/donnie4w/json4g v0.0.0-20160510154529-55f68986f34c
+	github.com/bennyscetbun/jsongo v1.1.0
 	github.com/gin-gonic/gin v1.6.2
 	github.com/jinzhu/gorm v1.9.12
 	github.com/kr/pretty v0.1.0 // indirect

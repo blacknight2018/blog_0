@@ -35,19 +35,14 @@ func InsertSingleFileUpload(context *gin.Context) {
 		ok = r.InsertUploadFile()
 		if ok {
 			if r.QueryGetFile() {
-				//context.Set(configure.ContextFiledName, r)
-				utils.SetRetObjectToJSONWithThrowException(context, r)
+				utils.SetSuccessRetObjectToJSONWithThrowException(context, r)
 				return
 			}
 		}
-		panic(proerror.PanicError{
-			ErrorType: proerror.ErrorOpera,
-			ErrorCode: proerror.UnknownError,
-		})
 
 	}
 	fileio.RemoveFile(md5ID)
-	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
+	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.UnknownError})
 }
 
 func QueryFile(context *gin.Context) {

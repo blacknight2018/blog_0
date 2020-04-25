@@ -8,8 +8,6 @@ import (
 	"blog_0/orm/userDao"
 	"blog_0/orm/utilsDao"
 	"blog_0/proerror"
-	"encoding/json"
-	"github.com/donnie4w/json4g"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"strconv"
@@ -43,7 +41,7 @@ func InsertComment(context *gin.Context) {
 				})
 			}
 			//context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
-			utils.SetRetObjectToJSONWithThrowException(context, configure.ContextEmptyFiled)
+			utils.SetSuccessRetObjectToJSONWithThrowException(context, configure.ContextEmptyFiled)
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
@@ -76,7 +74,7 @@ func QueryComment(context *gin.Context) {
 			r = utilsDao.SetDbSelect(r)
 			ret, ok := commentDao.QueryGetResult(r)
 			if ok {
-				utils.SetRetObjectToJSONWithThrowException(context, ret)
+				utils.SetSuccessRetObjectToJSONWithThrowException(context, ret)
 				return
 			}
 			panic(proerror.PanicError{
@@ -97,14 +95,8 @@ func QueryComment(context *gin.Context) {
 			})
 		}
 		//添加上name字段
-		bytes, err := json.Marshal(&ret)
-		if err != nil {
-			panic(proerror.PanicError{
-				ErrorType: proerror.ErrorOpera,
-				ErrorCode: proerror.UnknownError,
-			})
-		}
-		node, err := json4g.LoadByString(string(bytes))
+		retJson := utils.JsonParseWithThrowException(ret)
+		jsonObj := utils.JsonGoUnmarshalToObjectWithThrowException(retJson)
 		for i := 0; i < len(ret); i++ {
 			com := ret[i]
 			u := userDao.User{
@@ -116,10 +108,10 @@ func QueryComment(context *gin.Context) {
 					ErrorCode: proerror.UnknownError,
 				})
 			}
-			node.ArraysStruct[i].ToJsonNode().AddNode(json4g.NowJsonNode("name", u.User))
-			node.ArraysStruct[i].ToJsonNode().AddNode(json4g.NowJsonNode("avatar", u.AvatarUrl))
+			jsonObj.At(i).At("name").Val(u.User)
+			jsonObj.At(i).At("avatar").Val(u.AvatarUrl)
 		}
-		context.Set(configure.ContextFiledName, node.ToString())
+		context.Set(configure.ContextFiledName, utils.JsonGoParseWithThrowException(&jsonObj))
 		return
 
 	}
