@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"blog_0/configure"
 	"blog_0/fileio"
+	"blog_0/handler/utils"
 	"blog_0/orm/upfileDao"
 	"blog_0/proerror"
 	"github.com/gin-gonic/gin"
@@ -35,7 +35,8 @@ func InsertSingleFileUpload(context *gin.Context) {
 		ok = r.InsertUploadFile()
 		if ok {
 			if r.QueryGetFile() {
-				context.Set(configure.ContextFiledName, r)
+				//context.Set(configure.ContextFiledName, r)
+				utils.SetRetObjectToJSON(context, r)
 				return
 			}
 		}

@@ -5,7 +5,7 @@ import (
 	"blog_0/conversation"
 	"blog_0/logger"
 	"blog_0/proerror"
-	"encoding/json"
+	"github.com/donnie4w/json4g"
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,31 +43,26 @@ func RequestMiddle(context *gin.Context) {
 		}
 	}()
 
-	var obj = make(map[string]interface{})
-
-	//检查是否有错误发生
 	resp, err := context.Get(configure.ContextFiledName)
+	respString := resp.(string)
+	var rootNode = &json4g.JsonNode{}
 	if err {
-		//对响应的JSON添加更多的字段
-		obj[configure.ContextFiledName] = resp
-		obj[configure.ResponseStatusFiledName] = configure.ResponseSuccessName
+		rootNode.AddNode(json4g.NowJsonNodeByString(configure.ContextFiledName, respString))
+		rootNode.AddNode(json4g.NowJsonNode(configure.ResponseStatusFiledName, configure.ResponseSuccessName))
+		//node.AddNode(json4g.NowJsonNode(configure.ResponseStatusFiledName, configure.ResponseSuccessName))
+		//node.AddNode(json4g.NowJsonNodeByString(configure.ContextFiledName, respString))
+
 	} else {
 		resp2, err2 := context.Get(configure.ContextErrorFiledName)
+		resp2String := resp2.(string)
 		if err2 {
-			obj[configure.ResponseStatusFiledName] = configure.ResponseErrorName
-			obj[configure.ContextErrorFiledName] = resp2
+			rootNode.AddNode(json4g.NowJsonNode(configure.ResponseStatusFiledName, configure.ResponseErrorName))
+			rootNode.AddNode(json4g.NowJsonNode(configure.ContextErrorFiledName, resp2String))
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
 	}
-
-	//
-	output, err3 := json.Marshal(&obj)
-	if err3 == nil {
-		context.Writer.WriteString(string(output))
-	} else {
-		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
-	}
+	context.Writer.WriteString(rootNode.ToString())
 }
 
 /* 处理异常 */

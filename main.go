@@ -6,10 +6,20 @@ import (
 )
 
 func main() {
-	//s := struct {
+	//type student struct {
 	//	Name string
-	//	Age  int
-	//}{"aa", 18}
+	//	Age int
+	//}
+	//s1 :=student{
+	//	Name: "1",
+	//	Age:  1,
+	//}
+	//s2 :=student{
+	//	Name: "1",
+	//	Age:  1,
+	//}
+	//s3:=[...]student{s1,s2}
+
 	//
 	//b ,_:= setKeyValue(&s, "zz", 123)
 	//b ,_= setKeyValue(b, "a", "c")
@@ -17,7 +27,12 @@ func main() {
 	//bs,err:=json.Marshal(b)
 	//fmt.Println(string(bs),err)
 	//
-	//return
+	//bs,err:=json.Marshal(s3)
+	//fmt.Println(err)
+	//node ,err:= json4g.LoadByString(string(bs))
+	//fmt.Println(len(node.ArraysStruct))
+	//node.ArraysStruct[0].ToJsonNode().AddNode(json4g.NowJsonNode("chen","zz"))
+	//fmt.Println(node.ToString())
 	r := gin.Default()
 	//Session profile
 	//store := cookie.NewStore([]byte("secret"))

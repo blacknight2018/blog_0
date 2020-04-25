@@ -1,17 +1,51 @@
 package utils
 
-import "encoding/json"
+import (
+	"blog_0/configure"
+	"blog_0/proerror"
+	"encoding/base64"
+	"encoding/json"
+	"github.com/gin-gonic/gin"
+	"strings"
+)
 
-func SetJSONKeyValue(d interface{}, key string, val interface{}) (interface{}, bool) {
-	var m = make(map[string]interface{})
-	js, err := json.Marshal(d)
-	if nil != err {
-		return nil, false
+//提取出的公共接口，将对象转为json返回到前端，如果错误直接抛出
+func SetRetObjectToJSON(context *gin.Context, obj interface{}) {
+	bytes, err := json.Marshal(&obj)
+	if err == nil {
+		context.Set(configure.ContextFiledName, string(bytes))
+		return
 	}
-	err = json.Unmarshal(js, &m)
-	if nil != err {
-		return nil, false
+	panic(proerror.PanicError{
+		ErrorType: proerror.ErrorOpera,
+		ErrorCode: proerror.UnknownError,
+	})
+}
+
+//去除字符串中的回车符
+func RemoveEnterChar(content string) string {
+	return strings.Replace(content, "\n", "", -1)
+}
+
+func Base64String(text string) string {
+	return base64.StdEncoding.EncodeToString([]byte(text))
+}
+
+func Decode64String(text string) (string, bool) {
+	bs, err := base64.StdEncoding.DecodeString(text)
+	if err != nil {
+		return "", false
 	}
-	m[key] = val
-	return m, true
+	return string(bs), true
+}
+
+func Decode64StringWithThrowException(text string) string {
+	r, b := Decode64String(text)
+	if b == false {
+		panic(proerror.PanicError{
+			ErrorType: proerror.ErrorOpera,
+			ErrorCode: proerror.UnknownError,
+		})
+	}
+	return r
 }

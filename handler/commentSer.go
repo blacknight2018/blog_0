@@ -3,10 +3,13 @@ package handler
 import (
 	"blog_0/configure"
 	"blog_0/conversation"
+	"blog_0/handler/utils"
 	"blog_0/orm/commentDao"
 	"blog_0/orm/userDao"
 	"blog_0/orm/utilsDao"
 	"blog_0/proerror"
+	"encoding/json"
+	"github.com/donnie4w/json4g"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"strconv"
@@ -39,7 +42,8 @@ func InsertComment(context *gin.Context) {
 					ErrorCode: proerror.UnknownError,
 				})
 			}
-			context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
+			//context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
+			utils.SetRetObjectToJSON(context, configure.ContextEmptyFiled)
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
@@ -71,13 +75,14 @@ func QueryComment(context *gin.Context) {
 			r = utilsDao.AddSelectFiled(r, "cid")
 			r = utilsDao.SetDbSelect(r)
 			ret, ok := commentDao.QueryGetResult(r)
-			if !ok {
-				panic(proerror.PanicError{
-					ErrorType: proerror.ErrorOpera,
-					ErrorCode: proerror.UnknownError,
-				})
+			if ok {
+				utils.SetRetObjectToJSON(context, ret)
+				return
 			}
-			context.Set(configure.ContextFiledName, ret)
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
 			return
 		} else {
 			r = utilsDao.SetLimit(r, offsetInt, limitInt)
@@ -92,6 +97,14 @@ func QueryComment(context *gin.Context) {
 			})
 		}
 		//添加上name字段
+		bytes, err := json.Marshal(&ret)
+		if err != nil {
+			panic(proerror.PanicError{
+				ErrorType: proerror.ErrorOpera,
+				ErrorCode: proerror.UnknownError,
+			})
+		}
+		node, err := json4g.LoadByString(string(bytes))
 		for i := 0; i < len(ret); i++ {
 			com := ret[i]
 			u := userDao.User{
@@ -103,12 +116,10 @@ func QueryComment(context *gin.Context) {
 					ErrorCode: proerror.UnknownError,
 				})
 			}
-
-			ret[i].AuthorName = u.User
-			ret[i].AuthorHead = u.AvatarUrl
+			node.ArraysStruct[i].ToJsonNode().AddNode(json4g.NowJsonNode("name", u.User))
+			node.ArraysStruct[i].ToJsonNode().AddNode(json4g.NowJsonNode("avatar", u.AvatarUrl))
 		}
-
-		context.Set(configure.ContextFiledName, ret)
+		context.Set(configure.ContextFiledName, node.ToString())
 		return
 
 	}

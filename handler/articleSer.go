@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"blog_0/configure"
 	"blog_0/conversation"
+	"blog_0/handler/utils"
 	"blog_0/orm/articleDao"
 	"blog_0/orm/utilsDao"
 	"blog_0/proerror"
@@ -48,7 +48,8 @@ func QueryArticle(context *gin.Context) {
 				ErrorCode: proerror.UnknownError,
 			})
 		}
-		context.Set(configure.ContextFiledName, ret)
+		//context.Set(configure.ContextFiledName, ret)
+		utils.SetRetObjectToJSON(context, ret)
 		return
 	}
 	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
@@ -66,7 +67,14 @@ func QueryArticleDetail(context *gin.Context) {
 				ErrorCode: proerror.UnknownError,
 			})
 		}
-		context.Set(configure.ContextFiledName, article)
+		//查看文章内容时，文章封面和描述不需要了
+		article.ViewImg = ""
+		article.Description = ""
+
+		//去除html中的换车 jsongo有bug不会转义,但是由于base64不会有空格换行，没事
+		article.Content = utils.RemoveEnterChar(article.Content)
+		utils.SetRetObjectToJSON(context, article)
+
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
@@ -81,8 +89,6 @@ func InsertArticle(context *gin.Context) {
 		description := gjson.Get(json, "description").String()
 		img := gjson.Get(json, "view_img").String()
 		file := gjson.Get(json, "file").String()
-		//fmt.Println(file)
-		//fmt.Println(gjson.Get(json,"file").String())
 		us := conversation.GetSessionUser(context)
 
 		//fmt.Println(img)
@@ -90,11 +96,11 @@ func InsertArticle(context *gin.Context) {
 		if false == checkParamsSafeStringNotEmpty(title, content, description, img) {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
-
+		contextRemoved := utils.Base64String(content)
 		article := articleDao.Article{
 			Title:       title,
 			Author:      strconv.Itoa(us.Uid),
-			Content:     content,
+			Content:     contextRemoved,
 			Description: description,
 			ViewImg:     img,
 			File:        file,
@@ -105,7 +111,7 @@ func InsertArticle(context *gin.Context) {
 				ErrorCode: proerror.UnknownError,
 			})
 		}
-		context.Set(configure.ContextFiledName, ret)
+		utils.SetRetObjectToJSON(context, ret)
 
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
@@ -126,7 +132,8 @@ func DeleteArticle(context *gin.Context) {
 				ErrorCode: proerror.UnknownError,
 			})
 		}
-		context.Set(configure.ContextFiledName, ret)
+		utils.SetRetObjectToJSON(context, ret)
+		//context.Set(configure.ContextFiledName, ret)
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}

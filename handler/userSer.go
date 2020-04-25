@@ -3,6 +3,7 @@ package handler
 import (
 	"blog_0/configure"
 	"blog_0/conversation"
+	"blog_0/handler/utils"
 	"blog_0/orm/userDao"
 	"blog_0/proerror"
 	"encoding/gob"
@@ -38,7 +39,8 @@ func InsertUser(context *gin.Context) {
 
 func DeleteUserLogout(context *gin.Context) {
 	conversation.SessionDestroy(context)
-	context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
+	//context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
+	utils.SetRetObjectToJSON(context, configure.ContextEmptyFiled)
 }
 
 func InsertUserLogin(context *gin.Context) {
@@ -58,7 +60,8 @@ func InsertUserLogin(context *gin.Context) {
 			})
 		}
 		conversation.SetSessionUser(context, &us)
-		context.Set(configure.ContextFiledName, us)
+		//context.Set(configure.ContextFiledName, us)
+		utils.SetRetObjectToJSON(context, us)
 	} else {
 		panic(proerror.PanicError{
 			ErrorType: proerror.ErrorOpera,
@@ -83,5 +86,6 @@ func QueryUser(context *gin.Context) {
 			ErrorCode: proerror.UnknownError,
 		})
 	}
-	context.Set(configure.ContextFiledName, us)
+	utils.SetRetObjectToJSON(context, us)
+	//context.Set(configure.ContextFiledName, us)
 }

@@ -15,8 +15,6 @@ type Comment struct {
 	UserId      int        `json:"uid,omitempty" gorm:"column:uid;"`
 	CreateTime  *time.Time `json:"create_time,omitempty" gorm:"column:create_time;-"`
 	LastTime    *time.Time `json:"last_time,omitempty" gorm:"column:last_time;-"`
-	AuthorName  string     `json:"name" gorm:"-"`
-	AuthorHead  string     `json:"avatar" gorm:"-"`
 }
 
 func (t Comment) TableName() string {
