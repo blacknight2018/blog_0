@@ -16,6 +16,7 @@ type Article struct {
 	CreateTime  *time.Time `json:"create_time,omitempty" gorm:"column:create_time;"`
 	LastTime    *time.Time `json:"last_time,omitempty" gorm:"column:last_time;-"`
 	ViewImg     string     `json:"view_img,omitempty" gorm:"column:view_img;"`
+	File        string     `json:"file,omitempty" gorm:"column:file;"`
 }
 
 func (t Article) TableName() string {

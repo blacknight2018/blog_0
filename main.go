@@ -3,15 +3,21 @@ package main
 import (
 	"blog_0/handler"
 	"github.com/gin-gonic/gin"
-	_ "github.com/swaggo/gin-swagger/example/basic/docs"
 )
 
 func main() {
-
-	//u:=userDao.User{
-	//	Uid:        1,
-	//}
-	//u.QueryGetUser()
+	//s := struct {
+	//	Name string
+	//	Age  int
+	//}{"aa", 18}
+	//
+	//b ,_:= setKeyValue(&s, "zz", 123)
+	//b ,_= setKeyValue(b, "a", "c")
+	//b ,_= setKeyValue(b, "next", s)
+	//bs,err:=json.Marshal(b)
+	//fmt.Println(string(bs),err)
+	//
+	//return
 	r := gin.Default()
 	//Session profile
 	//store := cookie.NewStore([]byte("secret"))

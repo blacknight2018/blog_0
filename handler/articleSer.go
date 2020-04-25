@@ -80,6 +80,9 @@ func InsertArticle(context *gin.Context) {
 		content := gjson.Get(json, "content").String()
 		description := gjson.Get(json, "description").String()
 		img := gjson.Get(json, "view_img").String()
+		file := gjson.Get(json, "file").String()
+		//fmt.Println(file)
+		//fmt.Println(gjson.Get(json,"file").String())
 		us := conversation.GetSessionUser(context)
 
 		//fmt.Println(img)
@@ -94,6 +97,7 @@ func InsertArticle(context *gin.Context) {
 			Content:     content,
 			Description: description,
 			ViewImg:     img,
+			File:        file,
 		}
 		if !article.InsertArticle() {
 			panic(proerror.PanicError{
