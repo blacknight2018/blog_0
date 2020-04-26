@@ -5,17 +5,16 @@ import (
 	"blog_0/proerror"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"github.com/bennyscetbun/jsongo"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
 
 //提取出的公共接口，将对象转为json返回到前端，如果错误直接抛出
+//某个handler要返回对象到前端时调用这个函数
 func SetSuccessRetObjectToJSONWithThrowException(context *gin.Context, obj interface{}) {
 
 	bytes, err := json.Marshal(&obj)
-	fmt.Println(string(bytes))
 	if err == nil {
 		context.Set(configure.ContextFiledName, string(bytes))
 		return
@@ -26,6 +25,7 @@ func SetSuccessRetObjectToJSONWithThrowException(context *gin.Context, obj inter
 	})
 }
 
+//给except handler调用 设置错误标志 右边是proerror 错误对象
 func SetFailedRetObjectToJSONWithThrowException(context *gin.Context, obj interface{}) {
 	bytes, err := json.Marshal(&obj)
 	if err == nil {
@@ -38,6 +38,7 @@ func SetFailedRetObjectToJSONWithThrowException(context *gin.Context, obj interf
 	})
 }
 
+//解析对象成json会抛出异常
 func JsonParseWithThrowException(obj interface{}) string {
 	bytes, err := json.Marshal(obj)
 	if err != nil {
@@ -49,6 +50,7 @@ func JsonParseWithThrowException(obj interface{}) string {
 	return string(bytes)
 }
 
+//将json node对象解析为json会抛出异常
 func JsonGoParseWithThrowException(node *jsongo.Node) string {
 	r, err := json.MarshalIndent(node, "", "")
 	if err != nil {
@@ -60,6 +62,7 @@ func JsonGoParseWithThrowException(node *jsongo.Node) string {
 	return string(r)
 }
 
+//将json反解析为json node对象
 func JsonGoUnmarshalToObjectWithThrowException(jsont string) jsongo.Node {
 	r2 := jsongo.Node{}
 	err := json.Unmarshal([]byte(jsont), &r2)

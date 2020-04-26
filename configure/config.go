@@ -22,6 +22,7 @@ func GetDSN() string {
 	return `root:root@tcp(localhost:3306)/blog?charset=utf8&parseTime=True&loc=Local&timeout=10s&readTimeout=30s&writeTimeout=60s`
 }
 
+//文件保存的路径
 func GetLocalFileDir() string {
 	return `./files/`
 }

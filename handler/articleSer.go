@@ -73,25 +73,26 @@ func QueryArticleDetail(context *gin.Context) {
 		article.ViewImg = ""
 		article.Description = ""
 
-		//去除html中的换车 jsongo有bug不会转义,但是由于base64不会有空格换行，没事
-		//article.Content = utils.RemoveEnterChar(article.Content)
-
 		//查询出文章附带的文件列表返回
 		node := jsongo.Node{}
 		node.UnmarshalJSON([]byte(utils.JsonParseWithThrowException(article)))
 
+		//文件结构
 		type fileStruct struct {
 			Fid  string `json:"fid"`
 			Name string `json:"name"`
 		}
 		var fs []fileStruct
 		for _, v := range gjson.Parse(article.File).Array() {
-			fileName, _ := other.GetFileName(v.Index)
+			fileName, _ := other.GetFileName(int(v.Int()))
 			fs = append(fs, fileStruct{
 				v.String(),
 				fileName,
 			})
 		}
+		//
+
+		//添加上这个结点
 		node.At("file").Val(fs)
 
 		context.Set(configure.ContextFiledName, utils.JsonGoParseWithThrowException(&node))
