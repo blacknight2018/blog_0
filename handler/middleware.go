@@ -17,7 +17,7 @@ func setCors(context *gin.Context) {
 	context.Header("Access-Control-Allow-Credentials", "true")
 }
 
-/* 检查登录状态 */
+// 检查登录状态
 func CheckLoginStatus(context *gin.Context) {
 	//检查是否已经登录
 	if nil == conversation.GetSessionUser(context) {
@@ -29,15 +29,15 @@ func CheckLoginStatus(context *gin.Context) {
 	context.Next()
 }
 
-/* 处理请求前后 */
+// 处理请求前后
 func RequestMiddle(context *gin.Context) {
 
 	//允许跨域
 	setCors(context)
-	//
+	//下一层
 	context.Next()
-	//
 
+	//因为这里是最后一层,不能向前抛出异常了
 	defer func() {
 		if err := recover(); err != nil {
 			logger.SimpleLog()
@@ -46,10 +46,10 @@ func RequestMiddle(context *gin.Context) {
 
 	//ContextFiledName 域 必须是json
 	resp, err := context.Get(configure.ContextFiledName)
-	var ret jsongo.Node = jsongo.Node{}
+	var ret = jsongo.Node{}
 	if err {
 		respString := resp.(string)
-		r2 := utils.JsonGoUnmarshalToObjectWithThrowException(respString)
+		r2 := utils.GetNodeObjectFromJsonWithThrowException(respString)
 		ret.At(configure.ContextFiledName).Val(r2)
 		ret.At(configure.ResponseStatusFiledName).Val(configure.ResponseSuccessName)
 
@@ -57,14 +57,14 @@ func RequestMiddle(context *gin.Context) {
 		resp2, err2 := context.Get(configure.ContextErrorFiledName)
 		resp2String := resp2.(string)
 		if err2 {
-			r2 := utils.JsonGoUnmarshalToObjectWithThrowException(resp2String)
+			r2 := utils.GetNodeObjectFromJsonWithThrowException(resp2String)
 			ret.At(configure.ContextErrorFiledName).Val(r2)
 			ret.At(configure.ResponseStatusFiledName).Val(configure.ResponseErrorName)
 		} else {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
 	}
-	context.Writer.WriteString(utils.JsonGoParseWithThrowException(&ret))
+	context.Writer.WriteString(utils.GetJsonFromNodeObjectParseWithThrowException(&ret))
 	context.Writer.Flush()
 }
 

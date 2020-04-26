@@ -8,8 +8,7 @@ import (
 	"strconv"
 )
 
-var onlineUser = make(map[int]bool)
-
+//删除用户会话  用在注销的时候
 func SessionDestroy(context *gin.Context) {
 	us := GetSessionUser(context)
 	if us != nil {
@@ -25,6 +24,7 @@ func SessionDestroy(context *gin.Context) {
 	}
 }
 
+//设置用户会话 在登录时调用
 func SetSessionUser(context *gin.Context, us *userDao.User) {
 	Uid := strconv.Itoa(us.Uid)
 	ck := &http.Cookie{
@@ -37,6 +37,7 @@ func SetSessionUser(context *gin.Context, us *userDao.User) {
 	http.SetCookie(context.Writer, ck)
 }
 
+//获取用户会话,用于请求前校验
 func GetSessionUser(context *gin.Context) *userDao.User {
 	UidString, err := context.Cookie(configure.SessionName)
 	UidInt, err2 := strconv.Atoi(UidString)

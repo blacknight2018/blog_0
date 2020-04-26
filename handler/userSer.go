@@ -39,7 +39,6 @@ func InsertUser(context *gin.Context) {
 
 func DeleteUserLogout(context *gin.Context) {
 	conversation.SessionDestroy(context)
-	//context.Set(configure.ContextFiledName, configure.ContextEmptyFiled)
 	utils.SetSuccessRetObjectToJSONWithThrowException(context, configure.ContextEmptyFiled)
 }
 

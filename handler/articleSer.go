@@ -23,6 +23,20 @@ func checkParamsSafeStringNotEmpty(args ...string) bool {
 	return true
 }
 
+// @查询文章
+// Name will print hello name
+// @Summary 查询文章数量和获取一些文章
+// @Description 查询文章,用在后台管理时显示所有数量
+// @Accept json
+// @Produce  json
+// @Resource Name
+// @Param limit path int false "本次获取的文章数量"
+// @Param offset path int false "本次获取的文章偏移"
+// @Param order path string false "返回的时顺序还是逆序desc asc"
+// @Param flag path string false "可选len，表示返回所有的文章数量"
+// @Param filed path string false "可选域，返回时需要增加的字段，有view_img"
+// @Router /article [get]
+// @Success 200 {array} articleDao.Article string "返回一个数组"
 func QueryArticle(context *gin.Context) {
 	limit := context.DefaultQuery("limit", "10")
 	offset := context.DefaultQuery("offset", "0")
@@ -35,7 +49,7 @@ func QueryArticle(context *gin.Context) {
 	//default filed
 	defaultFiled := [...]string{"id", "title", "author", "description", "create_time", "last_time"}
 	if err == nil && err2 == nil {
-		r := utilsDao.OrderByID(nil, articleDao.QueryPrimaryID(), order)
+		r := utilsDao.SetOrderByID(nil, articleDao.QueryPrimaryID(), order)
 		if flag == "len" {
 			r = utilsDao.AddSelectFiled(r, "id")
 		} else {
@@ -75,7 +89,7 @@ func QueryArticleDetail(context *gin.Context) {
 
 		//查询出文章附带的文件列表返回
 		node := jsongo.Node{}
-		node.UnmarshalJSON([]byte(utils.JsonParseWithThrowException(article)))
+		node.UnmarshalJSON([]byte(utils.GetJsonFromObjectWithThrowException(article)))
 
 		//文件结构
 		type fileStruct struct {
@@ -84,7 +98,7 @@ func QueryArticleDetail(context *gin.Context) {
 		}
 		var fs []fileStruct
 		for _, v := range gjson.Parse(article.File).Array() {
-			fileName, _ := other.GetFileName(int(v.Int()))
+			fileName, _ := other.QueryFileName(int(v.Int()))
 			fs = append(fs, fileStruct{
 				v.String(),
 				fileName,
@@ -95,7 +109,7 @@ func QueryArticleDetail(context *gin.Context) {
 		//添加上这个结点
 		node.At("file").Val(fs)
 
-		context.Set(configure.ContextFiledName, utils.JsonGoParseWithThrowException(&node))
+		context.Set(configure.ContextFiledName, utils.GetJsonFromNodeObjectParseWithThrowException(&node))
 
 	} else {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})

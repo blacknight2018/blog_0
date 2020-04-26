@@ -65,7 +65,7 @@ func QueryComment(context *gin.Context) {
 	offsetInt, err2 := strconv.Atoi(offset)
 	articleIdInt, err3 := strconv.Atoi(articleId)
 	if err == nil && err2 == nil && err3 == nil {
-		r := utilsDao.OrderByID(nil, commentDao.QueryPrimaryID(), order)
+		r := utilsDao.SetOrderByID(nil, commentDao.QueryPrimaryID(), order)
 		//只返回目标Article
 		r = commentDao.SetDestArticleId(r, articleIdInt)
 		//只返回cid
@@ -95,8 +95,8 @@ func QueryComment(context *gin.Context) {
 			})
 		}
 		//添加上name字段
-		retJson := utils.JsonParseWithThrowException(ret)
-		jsonObj := utils.JsonGoUnmarshalToObjectWithThrowException(retJson)
+		retJson := utils.GetJsonFromObjectWithThrowException(ret)
+		jsonObj := utils.GetNodeObjectFromJsonWithThrowException(retJson)
 		for i := 0; i < len(ret); i++ {
 			com := ret[i]
 			u := userDao.User{
@@ -111,7 +111,7 @@ func QueryComment(context *gin.Context) {
 			jsonObj.At(i).At("name").Val(u.User)
 			jsonObj.At(i).At("avatar").Val(u.AvatarUrl)
 		}
-		context.Set(configure.ContextFiledName, utils.JsonGoParseWithThrowException(&jsonObj))
+		context.Set(configure.ContextFiledName, utils.GetJsonFromNodeObjectParseWithThrowException(&jsonObj))
 		return
 
 	}

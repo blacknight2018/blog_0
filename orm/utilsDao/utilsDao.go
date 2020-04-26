@@ -51,7 +51,7 @@ func SetLimit(db *gorm.DB, offset int, limit int) *gorm.DB {
 	return db.Limit(limit).Offset(offset)
 }
 
-func OrderByID(db *gorm.DB, primaryId string, order string) *gorm.DB {
+func SetOrderByID(db *gorm.DB, primaryId string, order string) *gorm.DB {
 	if db == nil {
 		db = orm.GetDB()
 	}

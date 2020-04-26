@@ -11,7 +11,7 @@ import (
 )
 
 //提取出的公共接口，将对象转为json返回到前端，如果错误直接抛出
-//某个handler要返回对象到前端时调用这个函数
+//某个handler成功调用后要返回一个对象到前端时调用这个函数 任意对象都可
 func SetSuccessRetObjectToJSONWithThrowException(context *gin.Context, obj interface{}) {
 
 	bytes, err := json.Marshal(&obj)
@@ -39,7 +39,7 @@ func SetFailedRetObjectToJSONWithThrowException(context *gin.Context, obj interf
 }
 
 //解析对象成json会抛出异常
-func JsonParseWithThrowException(obj interface{}) string {
+func GetJsonFromObjectWithThrowException(obj interface{}) string {
 	bytes, err := json.Marshal(obj)
 	if err != nil {
 		panic(proerror.PanicError{
@@ -51,7 +51,7 @@ func JsonParseWithThrowException(obj interface{}) string {
 }
 
 //将json node对象解析为json会抛出异常
-func JsonGoParseWithThrowException(node *jsongo.Node) string {
+func GetJsonFromNodeObjectParseWithThrowException(node *jsongo.Node) string {
 	r, err := json.MarshalIndent(node, "", "")
 	if err != nil {
 		panic(proerror.PanicError{
@@ -63,7 +63,7 @@ func JsonGoParseWithThrowException(node *jsongo.Node) string {
 }
 
 //将json反解析为json node对象
-func JsonGoUnmarshalToObjectWithThrowException(jsont string) jsongo.Node {
+func GetNodeObjectFromJsonWithThrowException(jsont string) jsongo.Node {
 	r2 := jsongo.Node{}
 	err := json.Unmarshal([]byte(jsont), &r2)
 	if err != nil {

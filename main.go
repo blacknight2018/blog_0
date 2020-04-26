@@ -1,58 +1,15 @@
 package main
 
 import (
+	_ "blog_0/docs"
 	"blog_0/handler"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
 func main() {
-	//type student struct {
-	//	Name string
-	//}
-	//s1:=student{Name:"a"}
-	//s2:=student{Name:"b"}
-	//var big []student
-	//big = append(big, s1)
-	//big = append(big, s2)
-	//ss:=utils.JsonParseWithThrowException(big)
-	//
-	//var array []interface{}
-	//json.Unmarshal([]byte(ss),&array)
-	//s12:=utils.JsonParseWithThrowException(array[0])
-	//s22:=utils.JsonParseWithThrowException(array[1])
-	//fmt.Println(s12,s22)
-	//fmt.Println(ss)
-	//o := jsongo.EmptyJsonObject()
-	//o.SetKey("Acc", 22)
-	////
-	//o2 := jsongo.EmptyJsonObject()
-	//
-	//////o.SetKey("cc",s1)
-	//o2.SetKey("person2", o)
-	//array := jsongo.EmptyJsonArrayObject()
-	//array.Add(*o2)
-	//array.Add(*o2)
-	////array.Add(o2)
-	//fmt.Println(array.GetJSONString())
-	////fmt.Println(array.Get(0))
-	////fmt.Println(array.Get(1))
-	//array.Get(0).SetKey("aa", 33)
-	//array.Get(1).SetKey("aabbb", 33)
-	//fmt.Println(array.GetJSONString())
-
-	//j:=jsongo.EmptyJsonObject().SetKey("name","chen")
-	//j.SetKey("na22me","chen")
-	//j2:=jsongo.EmptyJsonObject().SetKey("name","chen")
-	//j.SetKey("1",j2)
-	//fmt.Println(j.GetJSONString())
-	//return
-	//j:=jsongo.EmptyJsonArrayObject().Add(*jsongo.EmptyJsonObject().SetKey("a",1))
-	//j.Add(*jsongo.EmptyJsonObject().SetKey("name","chenhuaze"))
-	//fmt.Println(j.GetJSONString())
 	r := gin.Default()
-	//Session profile
-	//store := cookie.NewStore([]byte("secret"))
-	//r.Use(sessions.Sessions(configure.SessionName, store))
 
 	//需要先登录
 	article := r.Group("/article", handler.RequestMiddle, handler.Except)
@@ -91,5 +48,9 @@ func main() {
 	}
 	//解决CORS问题
 	r.OPTIONS("/*all", handler.RequestMiddle, handler.Except)
+
+	//文档
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	r.Run(":8080")
 }

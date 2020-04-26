@@ -10,7 +10,7 @@ func getNameFromDisposition(content string) string {
 	pos += len("filename=")
 	return content[pos+1 : (len(content) - 1)]
 }
-func GetFileName(fid int) (string, bool) {
+func QueryFileName(fid int) (string, bool) {
 	f := upfileDao.UpFile{
 		Fid: fid,
 	}
