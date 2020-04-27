@@ -1,11 +1,11 @@
-package handler
+package articleSer
 
 import (
 	"blog_0/configure"
-	"blog_0/conversation"
+	"blog_0/handler/resourceSer"
+	"blog_0/handler/userSer/conversation"
 	"blog_0/handler/utils"
 	"blog_0/orm/articleDao"
-	"blog_0/orm/upfileDao/other"
 	"blog_0/orm/utilsDao"
 	"blog_0/proerror"
 	"github.com/bennyscetbun/jsongo"
@@ -38,6 +38,7 @@ func checkParamsSafeStringNotEmpty(args ...string) bool {
 // @Router /article [get]
 // @Success 200 {array} articleDao.Article string "返回一个数组"
 func QueryArticle(context *gin.Context) {
+
 	limit := context.DefaultQuery("limit", "10")
 	offset := context.DefaultQuery("offset", "0")
 	order := context.DefaultQuery("order", "desc")
@@ -71,6 +72,7 @@ func QueryArticle(context *gin.Context) {
 	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 }
 func QueryArticleDetail(context *gin.Context) {
+
 	var id = context.Param("id")
 	var idInt, err = strconv.Atoi(id)
 	if err == nil {
@@ -98,7 +100,7 @@ func QueryArticleDetail(context *gin.Context) {
 		}
 		var fs []fileStruct
 		for _, v := range gjson.Parse(article.File).Array() {
-			fileName, _ := other.QueryFileName(int(v.Int()))
+			fileName, _ := resourceSer.QueryFileName(int(v.Int()))
 			fs = append(fs, fileStruct{
 				v.String(),
 				fileName,

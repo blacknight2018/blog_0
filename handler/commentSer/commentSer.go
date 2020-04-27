@@ -1,11 +1,11 @@
-package handler
+package commentSer
 
 import (
 	"blog_0/configure"
-	"blog_0/conversation"
+	"blog_0/handler/userSer"
+	"blog_0/handler/userSer/conversation"
 	"blog_0/handler/utils"
 	"blog_0/orm/commentDao"
-	"blog_0/orm/userDao"
 	"blog_0/orm/utilsDao"
 	"blog_0/proerror"
 	"github.com/gin-gonic/gin"
@@ -51,6 +51,7 @@ func InsertComment(context *gin.Context) {
 }
 
 func QueryComment(context *gin.Context) {
+
 	articleId := context.Param("article_id")
 	limit := context.DefaultQuery("limit", "50")
 	offset := context.DefaultQuery("offset", "0")
@@ -99,17 +100,16 @@ func QueryComment(context *gin.Context) {
 		jsonObj := utils.GetNodeObjectFromJsonWithThrowException(retJson)
 		for i := 0; i < len(ret); i++ {
 			com := ret[i]
-			u := userDao.User{
-				Uid: com.UserId,
-			}
-			if !u.QueryGetUser() {
+			userName, err := userSer.GetUserName(com.UserId)
+			userAvatar, err2 := userSer.GetUserAvatar(com.UserId)
+			if !err || !err2 {
 				panic(proerror.PanicError{
 					ErrorType: proerror.ErrorOpera,
 					ErrorCode: proerror.UnknownError,
 				})
 			}
-			jsonObj.At(i).At("name").Val(u.User)
-			jsonObj.At(i).At("avatar").Val(u.AvatarUrl)
+			jsonObj.At(i).At("name").Val(userName)
+			jsonObj.At(i).At("avatar").Val(userAvatar)
 		}
 		context.Set(configure.ContextFiledName, utils.GetJsonFromNodeObjectParseWithThrowException(&jsonObj))
 		return

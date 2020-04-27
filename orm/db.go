@@ -13,7 +13,7 @@ func init() {
 	if err == nil {
 		_db.DB().SetMaxOpenConns(100)
 		_db.DB().SetMaxIdleConns(20)
-		_db.LogMode(true)
+		_db.LogMode(false)
 		db = _db
 	}
 }

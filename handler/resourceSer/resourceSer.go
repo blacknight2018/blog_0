@@ -1,4 +1,4 @@
-package handler
+package resourceSer
 
 import (
 	"blog_0/fileio"
@@ -16,10 +16,13 @@ func InsertSingleFileUpload(context *gin.Context) {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
 	file, err := form.Open()
+	defer file.Close()
+
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
 	bytes, err := ioutil.ReadAll(file)
+
 	if err != nil {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
@@ -62,6 +65,7 @@ func QueryFile(context *gin.Context) {
 	}
 	MD5Id := r.FMd5
 	bytes, ok := fileio.ReadFile(MD5Id)
+
 	if ok {
 		context.Header("content-type", r.ContentType)
 		context.Header("content-disposition", r.ContentDisposition)

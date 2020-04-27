@@ -2,7 +2,7 @@ package handler
 
 import (
 	"blog_0/configure"
-	"blog_0/conversation"
+	"blog_0/handler/userSer/conversation"
 	"blog_0/handler/utils"
 	"blog_0/logger"
 	"blog_0/proerror"
@@ -11,6 +11,7 @@ import (
 )
 
 func setCors(context *gin.Context) {
+
 	context.Header("Access-Control-Allow-Origin", configure.AllowHttpServerCorAddress)
 	context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	context.Header("Access-Control-Allow-Headers", "Action, Module, X-PINGOTHER, Content-Type, Content-Disposition")
@@ -19,6 +20,7 @@ func setCors(context *gin.Context) {
 
 // 检查登录状态
 func CheckLoginStatus(context *gin.Context) {
+
 	//检查是否已经登录
 	if nil == conversation.GetSessionUser(context) {
 		panic(proerror.PanicError{
@@ -40,7 +42,10 @@ func RequestMiddle(context *gin.Context) {
 	//因为这里是最后一层,不能向前抛出异常了
 	defer func() {
 		if err := recover(); err != nil {
+
 			logger.SimpleLog()
+
+			context.Done()
 		}
 	}()
 
@@ -66,6 +71,7 @@ func RequestMiddle(context *gin.Context) {
 	}
 	context.Writer.WriteString(utils.GetJsonFromNodeObjectParseWithThrowException(&ret))
 	context.Writer.Flush()
+	context.Done()
 }
 
 /* 处理异常 */

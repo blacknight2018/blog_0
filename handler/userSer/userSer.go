@@ -1,8 +1,8 @@
-package handler
+package userSer
 
 import (
 	"blog_0/configure"
-	"blog_0/conversation"
+	"blog_0/handler/userSer/conversation"
 	"blog_0/handler/utils"
 	"blog_0/orm/userDao"
 	"blog_0/proerror"
@@ -69,6 +69,7 @@ func InsertUserLogin(context *gin.Context) {
 	}
 }
 func QueryUser(context *gin.Context) {
+
 	//默认查询自己，
 	us := conversation.GetSessionUser(context)
 	uid := context.Query("uid")
