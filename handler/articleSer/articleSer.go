@@ -29,12 +29,11 @@ func checkParamsSafeStringNotEmpty(args ...string) bool {
 // @Description 查询文章,用在后台管理时显示所有数量
 // @Accept json
 // @Produce  json
-// @Resource Name
-// @Param limit path int false "本次获取的文章数量"
-// @Param offset path int false "本次获取的文章偏移"
-// @Param order path string false "返回的时顺序还是逆序desc asc"
-// @Param flag path string false "可选len，表示返回所有的文章数量"
-// @Param filed path string false "可选域，返回时需要增加的字段，有view_img"
+// @Param limit query int false "每次获取的数量" default(10)
+// @Param offset query int false "每次获取的数量" default(0)
+// @Param order query string false "每次获取的数量" default(desc)
+// @Param flag query string false "标志位有[len]"
+// @Param filed query string false "额外添加的字段"
 // @Router /article [get]
 // @Success 200 {array} articleDao.Article string "返回一个数组"
 func QueryArticle(context *gin.Context) {
@@ -71,6 +70,16 @@ func QueryArticle(context *gin.Context) {
 	}
 	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 }
+
+// @查询文章内容
+// Name will print hello name
+// @Summary 获取文章的详细内容
+// @Description 标题 作者id 内容正文 和附件
+// @Accept json
+// @Param id path int true "文章ID"
+// @Produce  json
+// @Router /article/{id}/detail [get]
+// @Success 200 {object} articleDao.Article string "此外还包含文件列表数组"
 func QueryArticleDetail(context *gin.Context) {
 
 	var id = context.Param("id")
@@ -117,6 +126,24 @@ func QueryArticleDetail(context *gin.Context) {
 		panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 	}
 }
+
+type swag0 struct {
+	Title       string `json:"title"`
+	Content     string `json:"content"`
+	Description string `json:"description"`
+	View_img    string `json:"view_img"`
+	File        string `json:"file"`
+}
+
+// @添加文章
+// Name will print hello name
+// @Summary 添加文章
+// @Description 插入文章到数据库，需要登陆
+// @Accept json
+// @Produce  json
+// @Param title body swag0  true "参数正文"
+// @Router /article [POST]
+// @Success 200
 func InsertArticle(context *gin.Context) {
 	var ret string
 	bs, err := context.GetRawData()
@@ -158,6 +185,13 @@ func InsertArticle(context *gin.Context) {
 	}
 }
 
+// @删除文章
+// Name will print hello name
+// @Summary 删除文章
+// @Description 删除文章，需要登陆
+// @Param id path int true "文章ID"
+// @Router /article/{id} [DELETE]
+// @Success 200
 func DeleteArticle(context *gin.Context) {
 	var ret string
 	var id string = context.Param("id")
@@ -179,6 +213,15 @@ func DeleteArticle(context *gin.Context) {
 	}
 }
 
+// @修改文章
+// Name will print hello name
+// @Summary 修改文章
+// @Description 修改文章，需要登陆
+// @Accept json
+// @Param id path int true "文章ID"
+// @Param content formData string true "修改后的文章正文"
+// @Router /article/{id} [PUT]
+// @Success 200
 func ChangeArticle(context *gin.Context) {
 	var id string = context.Param("id")
 	var idInt, err = strconv.Atoi(id)

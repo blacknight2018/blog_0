@@ -67,6 +67,9 @@ export default {
         (this.page.cur_page - 1) * this.page.page_limit,
         res => {
           this.article = res.body.data;
+          for (let i = 0; i < this.article.length; i++) {
+            this.article[i].title = Base64.decode(this.article[i].title);
+          }
         }
       );
     },
