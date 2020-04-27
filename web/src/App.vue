@@ -9,6 +9,12 @@ import Index from "./Index";
 import Vue from "vue";
 import VueResource from "vue-resource";
 import ElementUI from "element-ui";
+
+//获取本机地址判断是否本地调试
+var os = require("os");
+var IPv4, hostName;
+
+
 Vue.use(VueResource);
 Vue.use(ElementUI);
 
@@ -26,11 +32,17 @@ var obj = {
     address: "http://127.0.0.1:8080"
   }
 };
+hostName = os.hostname();
+obj.server.address = "http://"+hostName+":8080"
 window.webapp = obj;
+
+
+
+
 /* WebApp的一些初始化工作 */
 
 window.webapp.uploadurl = window.webapp.server.address + "/file";
-window.webapp.fileurl = window.webapp.server.address + "/file/"
+window.webapp.fileurl = window.webapp.server.address + "/file/";
 /* 一些接口功能 */
 window.webapp.f = {};
 

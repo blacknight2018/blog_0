@@ -57,30 +57,8 @@ export default {
   },
   mounted() {
     let getLimitArticle = () => {
-      //每次一个limit加载 1秒一个
-
-      // let i = 1;
-      // window.webapp.me.getSomeArticle(this, i, this.offset, res => {
-
-      // });
-      // let ff = function(v, i) {
-      //   alert(22);
-      //   //console.log(this);
-      //   window.webapp.me.getSomeArticle(v, 1, v.offset, res => {
-      //     alert("加载第" + i + "个");
-      //     v.offset++;
-      //     v.lists.push(res.body.data[0]);
-      //     if (i == v.limit) {
-      //       return;
-      //     }
-      //     ff(v, i + 1);
-      //   });
-      // };
-      // ff(this, 1);
-      //ff.apply(this, 1);
       function ff(vue, i) {
-        // alert(i);
-        //alert(i);
+
         var key = "a" + vue.offset;
         if (vue.alreadyload[key] == true) {
           return;
@@ -91,6 +69,8 @@ export default {
           if (res.body.data.length == 0) {
             return;
           }
+          res.body.data[0].title = Base64.decode(res.body.data[0].title)
+          res.body.data[0].description = Base64.decode(res.body.data[0].description)
           vue.lists.push(res.body.data[0]);
           if (vue.limit == i) {
             return;
@@ -101,18 +81,8 @@ export default {
       }
       ff(this, 1);
 
-      // window.webapp.f.getSomeArticle(this, this.limit, this.offset, res => {
-      //   console.log(res.body.data);
-      //   for (let i = 0; i < res.body.data.length; i++) {
-      //     this.lists.push(res.body.data[i]);
-      //   }
-      //   this.offset += this.limit;
-      // });
     };
-    // window.webapp.f.getSomeArticle(this, this.limit, this.offset, res => {
-    //   this.lists = res.body.data;
-    //   this.offset += this.limit;
-    // });
+
     getLimitArticle();
     window.onmousewheel = function() {
       let scrollTop =

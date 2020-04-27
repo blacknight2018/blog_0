@@ -2,8 +2,8 @@ package articleSer
 
 import (
 	"blog_0/configure"
-	"blog_0/handler/resourceSer"
-	"blog_0/handler/userSer/conversation"
+	"blog_0/handler/resourceSer/out"
+	"blog_0/handler/userSer/out/conversation"
 	"blog_0/handler/utils"
 	"blog_0/orm/articleDao"
 	"blog_0/orm/utilsDao"
@@ -100,7 +100,7 @@ func QueryArticleDetail(context *gin.Context) {
 		}
 		var fs []fileStruct
 		for _, v := range gjson.Parse(article.File).Array() {
-			fileName, _ := resourceSer.QueryFileName(int(v.Int()))
+			fileName, _ := out.QueryFileName(int(v.Int()))
 			fs = append(fs, fileStruct{
 				v.String(),
 				fileName,
@@ -128,17 +128,19 @@ func InsertArticle(context *gin.Context) {
 		img := gjson.Get(json, "view_img").String()
 		file := gjson.Get(json, "file").String()
 		us := conversation.GetSessionUser(context)
-
+		content = utils.Base64String(content)
+		title = utils.Base64String(title)
+		description = utils.Base64String(description)
 		//fmt.Println(img)
 		//检查空字段
 		if false == checkParamsSafeStringNotEmpty(title, content, description, img) {
 			panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.ParamError})
 		}
-		contextRemoved := utils.Base64String(content)
+
 		article := articleDao.Article{
 			Title:       title,
 			Author:      strconv.Itoa(us.Uid),
-			Content:     contextRemoved,
+			Content:     content,
 			Description: description,
 			ViewImg:     img,
 			File:        file,

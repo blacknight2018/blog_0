@@ -1,19 +1,21 @@
 package logger
 
 import (
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
+	"runtime"
 )
 
 func init() {
 	logrus.SetOutput(os.Stdout)
 }
 func SimpleLog() {
-	//fmt.Println(1)
-	//_, file, line, ok := runtime.Caller(1)
-	//if ok {
-	//	fmt.Println(file, line)
-	//}
+	fmt.Println(1)
+	_, file, line, ok := runtime.Caller(1)
+	if ok {
+		fmt.Println(file, line)
+	}
 	//fmt.Println(2)
 	//_, file2, line2, ok2 := runtime.Caller(2)
 	//if ok2 {

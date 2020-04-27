@@ -2,8 +2,8 @@ package commentSer
 
 import (
 	"blog_0/configure"
-	"blog_0/handler/userSer"
-	"blog_0/handler/userSer/conversation"
+	"blog_0/handler/userSer/out"
+	"blog_0/handler/userSer/out/conversation"
 	"blog_0/handler/utils"
 	"blog_0/orm/commentDao"
 	"blog_0/orm/utilsDao"
@@ -20,7 +20,7 @@ func InsertComment(context *gin.Context) {
 		content := gjson.Get(json, "content").String()
 		replyToId := gjson.Get(json, "replyto_cid").String()
 		articleId := gjson.Get(json, "article_id").String()
-
+		content = utils.Base64String(content)
 		if replyToId == "" {
 			replyToId = "0"
 		}
@@ -100,8 +100,8 @@ func QueryComment(context *gin.Context) {
 		jsonObj := utils.GetNodeObjectFromJsonWithThrowException(retJson)
 		for i := 0; i < len(ret); i++ {
 			com := ret[i]
-			userName, err := userSer.GetUserName(com.UserId)
-			userAvatar, err2 := userSer.GetUserAvatar(com.UserId)
+			userName, err := out.GetUserName(com.UserId)
+			userAvatar, err2 := out.GetUserAvatar(com.UserId)
 			if !err || !err2 {
 				panic(proerror.PanicError{
 					ErrorType: proerror.ErrorOpera,

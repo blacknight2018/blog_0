@@ -2,7 +2,7 @@ package userSer
 
 import (
 	"blog_0/configure"
-	"blog_0/handler/userSer/conversation"
+	"blog_0/handler/userSer/out/conversation"
 	"blog_0/handler/utils"
 	"blog_0/orm/userDao"
 	"blog_0/proerror"

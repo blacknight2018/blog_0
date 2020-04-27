@@ -103,7 +103,8 @@ export default {
       var obj = res.body.data;
       this.response = obj;
       this.response.content = Base64.decode(this.response.content);
-      //console.log(this.response.file);
+      this.response.title = Base64.decode(this.response.title);
+
       if (this.response.file != undefined)
         this.response.file = this.response.file;
       //加载作者头像信息
@@ -123,7 +124,15 @@ export default {
     );
     //加载回复
     window.webapp.f.getComment(this, this.getCurHrefArticleId(), res => {
+      // this.commentlist.content.content = Base64.decode(
+      //   this.commentlist.content
+      // );
       this.commentlist.content = res.body.data;
+      for (let k = 0; k < this.commentlist.content.length; k++) {
+        this.commentlist.content[k].content = Base64.decode(
+          this.commentlist.content[k].content
+        );
+      }
     });
   },
   methods: {

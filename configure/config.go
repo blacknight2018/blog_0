@@ -1,5 +1,12 @@
 package configure
 
+import (
+	"blog_0/logger"
+	"fmt"
+	"os"
+	"strings"
+)
+
 //Handler Const String
 const ContextFiledName = "data"
 const ContextErrorFiledName = "error"
@@ -7,7 +14,9 @@ const ContextEmptyFiled = ""
 const ResponseSuccessName = "ok"
 const ResponseErrorName = "error"
 const ResponseStatusFiledName = "status"
-const AllowHttpServerCorAddress = "http://127.0.0.1"
+
+var AllowHttpServerCorAddress string = "http://127.0.0.1"
+
 const SelectFiledKeyName = "filed"
 const EmptyString = ""
 const SessionName = "Blog"
@@ -16,6 +25,21 @@ const (
 	U_ADMIN_ = iota
 	U_USER   = iota
 )
+
+func init() {
+	fmt.Printf(os.Hostname())
+	pcName, err := os.Hostname()
+	if err == nil {
+		if strings.Index(pcName, "Za631y") >= 0 {
+			AllowHttpServerCorAddress = "http://39.107.93.78"
+		} else {
+			AllowHttpServerCorAddress = "http://127.0.0.1"
+		}
+	} else {
+		logger.SimpleLog()
+	}
+
+}
 
 //数据库链接
 func GetDSN() string {

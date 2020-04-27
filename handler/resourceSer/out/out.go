@@ -1,4 +1,4 @@
-package resourceSer
+package out
 
 import (
 	"blog_0/orm/upfileDao"

@@ -2,7 +2,7 @@ package handler
 
 import (
 	"blog_0/configure"
-	"blog_0/handler/userSer/conversation"
+	"blog_0/handler/userSer/out/conversation"
 	"blog_0/handler/utils"
 	"blog_0/logger"
 	"blog_0/proerror"
