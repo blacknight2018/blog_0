@@ -13,6 +13,21 @@ import (
 	"strconv"
 )
 
+type swag1 struct {
+	Content     string `json:"content"`
+	Replyto_cid string `json:"replyto_cid"`
+	Article_id  string `json:"article_id"`
+}
+
+// @添加文章
+// Name will print hello name
+// @Summary 发表回复
+// @Description 回复
+// @Accept json
+// @Produce  json
+// @Param title body swag1  true "参数正文"
+// @Router /comment [POST]
+// @Success 200
 func InsertComment(context *gin.Context) {
 	bs, err := context.GetRawData()
 	if err == nil {
@@ -50,6 +65,25 @@ func InsertComment(context *gin.Context) {
 	}
 }
 
+type swag2 struct {
+	commentDao.Comment
+	Avatar string `json:"avatar"`
+	Name   string `json:"name"`
+}
+
+// @查询回复
+// Name will print hello name
+// @Summary 获取回复
+// @Description 获取回复内容，头像，正文，名称
+// @Accept json
+// @Produce  json
+// @Param article_id path int   true "文章id"
+// @Param limit query int   false "获取数量"
+// @Param offset query int   false "开始偏移"
+// @Param order query string   false "顺序"
+// @Param flag query string   false "标志位 [len]"
+// @Router /comment/{article_id} [GET]
+// @Success 200 {object} swag2
 func QueryComment(context *gin.Context) {
 
 	articleId := context.Param("article_id")
