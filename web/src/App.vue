@@ -101,7 +101,7 @@ window.webapp.f.login = function(vue, form, success) {
 window.webapp.f.logout = function(vue, success) {
   var request = window.webapp.server.address;
   request += "/user/logout";
-  vue.$http.get(request).then(function(res) {
+  vue.$http.delete(request).then(function(res) {
     if (res.body.status == "ok") {
       success(res);
     } else {

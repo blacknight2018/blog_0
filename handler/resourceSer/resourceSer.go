@@ -10,6 +10,15 @@ import (
 	"strconv"
 )
 
+// @上传文件
+// Name will print hello name
+// @Summary 上传文件
+// @Description 需要登录
+// @Accept mpfd
+// @Produce  json
+// @Param file formData file true "资源内容"
+// @Router /file [POST]
+// @Success 200 {object} upfileDao.UpFile
 func InsertSingleFileUpload(context *gin.Context) {
 	form, err := context.FormFile("file")
 	if err != nil || form.Size == 0 {
@@ -48,6 +57,15 @@ func InsertSingleFileUpload(context *gin.Context) {
 	panic(proerror.PanicError{ErrorType: proerror.ErrorOpera, ErrorCode: proerror.UnknownError})
 }
 
+// @下载文件
+// Name will print hello name
+// @Summary 下载资源
+// @Description 需要登录
+// @Accept json
+// @Produce  jpeg
+// @Param id path int  true "资源id"
+// @Router /file/{id} [GET]
+// @Success 200
 func QueryFile(context *gin.Context) {
 	fid := context.Param("id")
 	fidInt, err := strconv.Atoi(fid)

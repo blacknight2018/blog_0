@@ -39,9 +39,9 @@ func main() {
 	}
 	user := r.Group("/user", handler.RequestMiddle, handler.Except)
 	{
-		user.POST("/add", handler.CheckLoginStatus, userSer.InsertUser)
+		user.POST("/add", userSer.InsertUser)
 
-		user.GET("/logout", userSer.DeleteUserLogout)
+		user.DELETE("/logout", userSer.DeleteUserLogout)
 		//Set Session
 		user.POST("/login", userSer.InsertUserLogin)
 

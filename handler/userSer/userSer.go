@@ -15,6 +15,22 @@ import (
 func init() {
 	gob.Register(&userDao.User{})
 }
+
+type swag1 struct {
+	User     string `json:"user"`
+	Password string `json:"password"`
+	Avatar   string `json:"avatar"`
+}
+
+// @添加用户
+// Name will print hello name
+// @Summary 添加用户
+// @Description 添加用户
+// @Accept json
+// @Produce  json
+// @Param u body swag1 true "提交的参数"
+// @Router /user/add [POST]
+// @Success 200
 func InsertUser(context *gin.Context) {
 	bs, err := context.GetRawData()
 	if err == nil {
@@ -37,11 +53,33 @@ func InsertUser(context *gin.Context) {
 	}
 }
 
+// @用户注销
+// Name will print hello name
+// @Summary 用户注销
+// @Description 用户注销
+// @Accept json
+// @Produce  json
+// @Router /user/logout [DELETE]
+// @Success 200
 func DeleteUserLogout(context *gin.Context) {
 	conversation.SessionDestroy(context)
 	utils.SetSuccessRetObjectToJSONWithThrowException(context, configure.ContextEmptyFiled)
 }
 
+type swag0 struct {
+	User     string `json:"user"`
+	Password string `json:"password"`
+}
+
+// @用户登录
+// Name will print hello name
+// @Summary 用户登录
+// @Description 用户登录
+// @Accept json
+// @Produce  json
+// @Param u body swag0 true "提交的参数"
+// @Router /user/login [POST]
+// @Success 200 {object} userDao.User
 func InsertUserLogin(context *gin.Context) {
 	bs, err := context.GetRawData()
 	if err == nil {
@@ -68,6 +106,16 @@ func InsertUserLogin(context *gin.Context) {
 		})
 	}
 }
+
+// @查询用户
+// Name will print hello name
+// @Summary 查询用户
+// @Description 获取用户信息
+// @Accept json
+// @Produce  json
+// @Param uid query int  false "用户uid"
+// @Router /user [GET]
+// @Success 200 {object} userDao.User
 func QueryUser(context *gin.Context) {
 
 	//默认查询自己，
